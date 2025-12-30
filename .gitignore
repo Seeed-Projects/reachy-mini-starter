@@ -1,0 +1,105 @@
+# Reachy Mini Starter - .gitignore
+# ================================
+# 此文件确保敏感配置信息不会被提交到仓库
+
+# === 配置文件 (重要!) ===
+# 用户实际的配置文件 (包含IP地址、串口等私密信息)
+configs/robot_config.yaml
+configs/user_config.yaml
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# === 虚拟环境 ===
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# === Jupyter Notebook ===
+.ipynb_checkpoints
+*.ipynb
+
+# === 测试 & 覆盖率 ===
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# === 日志文件 ===
+*.log
+logs/
+*.log.*
+
+# === 临时文件 ===
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+*.bak
+
+# === 模型文件 & 数据 ===
+*.pkl
+*.pth
+*.pt
+*.onnx
+*.h5
+*.hdf5
+models/
+data/
+dataset/
+
+# === API密钥 & 敏感信息 ===
+.env
+.env.local
+*.key
+*.pem
+credentials.json
+secrets.yaml
+
+# === 视频和图片输出 ===
+outputs/
+recordings/
+snapshots/
+*.mp4
+*.avi
+*.mov
