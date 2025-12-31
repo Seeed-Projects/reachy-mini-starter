@@ -1,6 +1,6 @@
-# Reachy Mini 完整 API 接口开发指南
+# Reachy Mini API 接口开发指南
 
-本文档按通信协议分类详细说明 Reachy Mini 机器人的所有控制接口，包括所有参数范围、可控制自由度和限制。
+完整的 Reachy Mini 机器人控制接口文档，涵盖所有参数范围、可控制自由度和使用限制。
 
 ---
 
@@ -38,10 +38,12 @@
 | **运动参数** | duration | 0.1 ~ 10.0 | 秒 | 运动时长 |
 
 **插值方式**:
-- `linear`: 线性插值，匀速运动
-- `minjerk`: 最小抖动插值，平滑运动（推荐）
-- `ease`: 缓动插值，加减速平滑
-- `cartoon`: 卡通插值，弹性效果
+| 方式 | 说明 |
+|-----|------|
+| `linear` | 线性插值，匀速运动 |
+| `minjerk` | 最小抖动插值，平滑运动（推荐） |
+| `ease` | 缓动插值，加减速平滑 |
+| `cartoon` | 卡通插值，弹性效果 |
 
 #### 接口列表
 
@@ -122,17 +124,19 @@
 | **完整状态** | GET `/state/full` | 所有状态 | - |
 
 **GET `/state/full` 查询参数**:
-- `with_control_mode`: 控制模式（默认 true）
-- `with_head_pose`: 当前头部姿态（默认 true）
-- `with_target_head_pose`: 目标头部姿态（默认 false）
-- `with_head_joints`: 头部关节角度（默认 false）
-- `with_target_head_joints`: 目标关节角度（默认 false）
-- `with_body_yaw`: 身体偏航（默认 true）
-- `with_target_body_yaw`: 目标身体偏航（默认 false）
-- `with_antenna_positions`: 天线位置（默认 true）
-- `with_target_antenna_positions`: 目标天线位置（默认 false）
-- `with_passive_joints`: 被动关节（默认 false）
-- `use_pose_matrix`: 使用矩阵格式（默认 false）
+| 参数 | 默认值 | 说明 |
+|-----|-------|------|
+| with_control_mode | true | 控制模式 |
+| with_head_pose | true | 当前头部姿态 |
+| with_target_head_pose | false | 目标头部姿态 |
+| with_head_joints | false | 头部关节角度 |
+| with_target_head_joints | false | 目标关节角度 |
+| with_body_yaw | true | 身体偏航 |
+| with_target_body_yaw | false | 目标身体偏航 |
+| with_antenna_positions | true | 天线位置 |
+| with_target_antenna_positions | false | 目标天线位置 |
+| with_passive_joints | false | 被动关节 |
+| use_pose_matrix | false | 使用矩阵格式 |
 
 ---
 
@@ -140,17 +144,15 @@
 
 #### 可控对象
 
-| 控制对象 | 参数 | 可选值 | 说明 |
-|---------|-----|-------|------|
-| **电机模式** | mode | `enabled` | 电机启用，刚性控制（mode 3） |
-| | | `disabled` | 电机禁用，可手动移动（mode 0） |
-| | | `gravity_compensation` | 重力补偿，保持姿态（mode 5） |
+| 控制对象 | 参数 | 说明 |
+|---------|-----|------|
+| **电机模式** | `enabled` | 电机启用，刚性控制（mode 3） |
+| | `disabled` | 电机禁用，可手动移动（mode 0） |
+| | `gravity_compensation` | 重力补偿，保持姿态（mode 5） |
 
 **接口列表**:
-
-**GET `/motors/status`** - 获取电机状态
-
-**POST `/motors/set_mode/{mode}`** - 设置电机模式
+- **GET `/motors/status`** - 获取电机状态
+- **POST `/motors/set_mode/{mode}`** - 设置电机模式
 
 ---
 
@@ -167,9 +169,11 @@
 | **声源方向** | doa_angle | 0 ~ π | - | 弧度 |
 
 **声源方向说明**:
-- 0 弧度 = 左边
-- π/2 弧度 = 前方/后方
-- π 弧度 = 右边
+| 弧度 | 方向 |
+|-----|------|
+| 0 | 左边 |
+| π/2 | 前方/后方 |
+| π | 右边 |
 
 #### 接口列表
 
@@ -217,45 +221,45 @@
 
 ### 1.5 应用管理 `/apps`
 
-**GET `/apps/list-available`** - 列出可用应用
+| 接口 | 方法 | 说明 |
+|-----|------|------|
+| `/apps/list-available` | GET | 列出可用应用 |
+| `/apps/install` | POST | 安装应用 |
+| `/apps/start-app/{app_name}` | POST | 启动应用 |
+| `/apps/stop-current-app` | POST | 停止应用 |
+| `/apps/current-app-status` | GET | 获取应用状态 |
 
-**POST `/apps/install`** - 安装应用
+**安装应用请求示例**:
 ```json
 {"source": "huggingface", "app_id": "pollen-robotics/reachy_mini_conversation_app"}
 ```
-
-**POST `/apps/start-app/{app_name}`** - 启动应用
-
-**POST `/apps/stop-current-app`** - 停止应用
-
-**GET `/apps/current-app-status`** - 获取应用状态
 
 ---
 
 ### 1.6 运动学 `/kinematics`
 
-**GET `/kinematics/info`** - 获取运动学信息
+| 引擎类型 | 说明 |
+|---------|------|
+| `AnalyticalKinematics` | 解析解（默认，最快） |
+| `PlacoKinematics` | 优化解（支持碰撞检测） |
+| `NNKinematics` | 神经网络（需要模型） |
 
-**引擎类型**:
-- `AnalyticalKinematics`: 解析解（默认，最快）
-- `PlacoKinematics`: 优化解（支持碰撞检测）
-- `NNKinematics`: 神经网络（需要模型）
-
-**GET `/kinematics/urdf`** - 获取 URDF 模型
-
-**GET `/kinematics/stl/{filename}`** - 获取 STL 文件（3D 可视化）
+| 接口 | 方法 | 说明 |
+|-----|------|------|
+| `/kinematics/info` | GET | 获取运动学信息 |
+| `/kinematics/urdf` | GET | 获取 URDF 模型 |
+| `/kinematics/stl/{filename}` | GET | 获取 STL 文件（3D 可视化） |
 
 ---
 
 ### 1.7 守护进程 `/daemon`
 
-**POST `/daemon/start`** - 启动守护进程
-
-**POST `/daemon/stop`** - 停止守护进程
-
-**POST `/daemon/restart`** - 重启守护进程
-
-**GET `/daemon/status`** - 获取状态
+| 接口 | 方法 | 说明 |
+|-----|------|------|
+| `/daemon/start` | POST | 启动守护进程 |
+| `/daemon/stop` | POST | 停止守护进程 |
+| `/daemon/restart` | POST | 重启守护进程 |
+| `/daemon/status` | GET | 获取状态 |
 
 ---
 
