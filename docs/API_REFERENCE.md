@@ -4,6 +4,27 @@ Complete Reachy Mini robot control interface documentation, covering all paramet
 
 ---
 
+## 📋 Interface Overview & Demo Mapping
+
+| Interface Type | Latency | Use Case | Implemented Demos | Status |
+|:--------------|:-------|:---------|:------------------|:-------|
+| **REST API** | 20-50ms | Single commands, config queries | ✅ All Implemented | Complete |
+| **WebSocket** | <10ms | Real-time control, state streaming | ⏳ Planned | Planned |
+| **Zenoh** | 10-20ms | Python SDK development | ⏳ Planned | Planned |
+| **BLE** | 100-500ms | Configuration, debugging | ⏳ Planned | Planned |
+
+### 🎯 REST API Demo Coverage
+
+| API Endpoint | Function | Demo File | Status |
+|:-------------|:--------|:----------|:-------|
+| `/move/goto` | Motion control | [`02_basic_body_rotation`](../demos/02_basic_body_rotation/test_body_rotation.py) | ✅ |
+| `/move/goto` | Nod head motion | [`03_basic_nod_head`](../demos/03_basic_nod_head/test_nod_head.py) | ✅ |
+| `/move/goto` | Shake head motion | [`04_basic_shake_head`](../demos/04_basic_shake_head/test_shake_head.py) | ✅ |
+| `/volume/*` | Audio control | [`01_basic_audio_control`](../demos/01_basic_audio_control/test_audio_control.py) | ✅ |
+| `/motors/*` | Motor control | Used in all motion demos | ✅ |
+
+---
+
 ## Table of Contents
 
 1. [REST API Interface](#1-rest-api-interface)
