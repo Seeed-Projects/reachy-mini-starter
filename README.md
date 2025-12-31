@@ -2,6 +2,12 @@
 
 基于官方 API 的 Reachy Mini 机器人 Python 开发框架，提供基础控制接口和完整示例代码。
 
+---
+
+**中文** | [English](README_EN.md)
+
+---
+
 ## 特性
 
 - 统一的配置管理系统，一处配置全局使用
@@ -24,10 +30,14 @@ reachy-mini-starter/
 │   ├── 01_basic_audio_control/   # 音频控制
 │   ├── 02_basic_body_rotation/   # 身体旋转
 │   ├── 03_basic_nod_head/        # 点头动作
-│   ├── 04_basic_shake_head/      # 摇头动作
-│   ├── API_接口开发指南.md       # API 文档
-│   ├── CN使用修改.md             # 使用指南
-│   └── CN连接配网.md             # 网络配置
+│   └── 04_basic_shake_head/      # 摇头动作
+├── docs/                         # 文档
+│   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
+│   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
+│   ├── NETWORK_GUIDE_CN.md       # 网络配置（中文）
+│   ├── API_REFERENCE.md          # API 参考文档（English）
+│   ├── USAGE_GUIDE.md            # 使用指南（English）
+│   └── NETWORK_GUIDE.md          # 网络配置（English）
 ├── configs/                      # 配置文件目录
 ├── scripts/                      # 工具脚本
 └── requirements.txt              # 依赖包
@@ -94,9 +104,17 @@ python demos/04_basic_shake_head/test_shake_head.py
 
 ## 文档
 
-- [API 接口开发指南](demos/API_接口开发指南.md) - 完整的 REST API 参考文档
-- [使用修改指南](demos/CN使用修改.md) - 详细的使用说明和修改建议
-- [连接配网指南](demos/CN连接配网.md) - 网络连接配置步骤
+### 中文文档
+
+- [API 接口开发指南](docs/API_REFERENCE_CN.md) - 完整的 REST API 参考文档
+- [使用修改指南](docs/USAGE_GUIDE_CN.md) - 详细的使用说明和修改建议
+- [连接配网指南](docs/NETWORK_GUIDE_CN.md) - 网络连接配置步骤
+
+### English Documentation
+
+- [API Reference Guide](docs/API_REFERENCE.md) - Complete REST API reference
+- [Usage and Debugging Guide](docs/USAGE_GUIDE.md) - Detailed usage instructions
+- [Network Configuration Guide](docs/NETWORK_GUIDE.md) - Network setup steps
 
 ## 开发路线
 
