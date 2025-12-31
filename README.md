@@ -210,4 +210,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 **Built with ❤️ for the Reachy Mini community**
 
+**Powered by [Seeed Studio](https://www.seeedstudio.com/)**
+
 </div>

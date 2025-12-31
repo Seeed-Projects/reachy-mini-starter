@@ -210,4 +210,6 @@ python demos/04_basic_shake_head/test_shake_head.py
 
 **用 ❤️ 为 Reachy Mini 社区构建**
 
+**由 [Seeed Studio](https://www.seeedstudio.com/) 提供支持**
+
 </div>
