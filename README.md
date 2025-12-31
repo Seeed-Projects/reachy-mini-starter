@@ -153,6 +153,18 @@ The configuration file is included in `.gitignore` to protect your private infor
 | Status query | Get device status | ⏳ Planned |
 | Hotspot reset | Reset network | ⏳ Planned |
 
+### ROS2 (Planned ⏳)
+
+> **Note**: This is a community-developed ROS2 middleware that converts native APIs to ROS2 topics, not an official interface.
+
+| Topic | Message Type | Description | Demo |
+|-------|--------------|-------------|------|
+| `/reachy_mini/head_command` | `geometry_msgs/PoseStamped` | Head pose command | ⏳ Planned |
+| `/reachy_mini/joint_command` | `sensor_msgs/JointState` | Joint position command | ⏳ Planned |
+| `/reachy_mini/joint_states` | `sensor_msgs/JointState` | Current joint states | ⏳ Planned |
+| `/reachy_mini/audio/play` | `std_msgs/String` | Audio file to play | ⏳ Planned |
+| `/reachy_mini/audio/volume` | `std_msgs/UInt8` | Speaker volume (0-100) | ⏳ Planned |
+
 ---
 
 ## 🎯 Demo Overview

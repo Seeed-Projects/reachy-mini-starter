@@ -153,6 +153,18 @@ python demos/04_basic_shake_head/test_shake_head.py
 | 状态查询 | 获取设备状态 | ⏳ 计划中 |
 | 热点重置 | 重置网络 | ⏳ 计划中 |
 
+### ROS2 (计划中 ⏳)
+
+> **注意**：这是社区开发的 ROS2 中间件，用于将原生接口转换为 ROS2 topic，非官方接口。
+
+| Topic | 消息类型 | 说明 | Demo |
+|-------|----------|------|------|
+| `/reachy_mini/head_command` | `geometry_msgs/PoseStamped` | 头部姿态命令 | ⏳ 计划中 |
+| `/reachy_mini/joint_command` | `sensor_msgs/JointState` | 关节位置命令 | ⏳ 计划中 |
+| `/reachy_mini/joint_states` | `sensor_msgs/JointState` | 当前关节状态 | ⏳ 计划中 |
+| `/reachy_mini/audio/play` | `std_msgs/String` | 播放音频文件 | ⏳ 计划中 |
+| `/reachy_mini/audio/volume` | `std_msgs/UInt8` | 扬声器音量 (0-100) | ⏳ 计划中 |
+
 ---
 
 ## 🎯 Demo 说明
