@@ -111,14 +111,58 @@ python demos/04_basic_shake_head/test_shake_head.py
 
 ---
 
+## 🔌 API 接口覆盖
+
+### REST API (已实现 ✅)
+
+| 接口 | 方法 | 说明 | Demo |
+|:----|:-----|:-----|:-----|
+| `/move/goto` | POST | 平滑运动到目标 | [身体旋转](demos/02_basic_body_rotation)、[点头](demos/03_basic_nod_head)、[摇头](demos/04_basic_shake_head) |
+| `/move/set_target` | POST | 立即设置目标 | - |
+| `/move/goto_joint_positions` | POST | 关节空间运动 | - |
+| `/move/stop` | POST | 停止运动 | 所有运动 Demo |
+| `/motors/set_mode/{mode}` | POST | 设置电机模式 | 所有运动 Demo |
+| `/volume/current` | GET | 获取扬声器音量 | [音频控制](demos/01_basic_audio_control) |
+| `/volume/set` | POST | 设置扬声器音量 | [音频控制](demos/01_basic_audio_control) |
+| `/volume/test-sound` | POST | 播放测试音 | [音频控制](demos/01_basic_audio_control) |
+| `/volume/microphone/current` | GET | 获取麦克风增益 | [音频控制](demos/01_basic_audio_control) |
+| `/volume/microphone/set` | POST | 设置麦克风增益 | [音频控制](demos/01_basic_audio_control) |
+| `/state/full` | GET | 获取完整状态 | - |
+
+### WebSocket (计划中 ⏳)
+
+| 接口 | 说明 | Demo |
+|:----|:-----|:-----|
+| `/move/ws/set_target` | 实时控制 (60Hz+) | ⏳ 计划中 |
+| `/state/ws/full` | 状态流 | ⏳ 计划中 |
+| `/move/ws/updates` | 运动事件 | ⏳ 计划中 |
+
+### Zenoh (计划中 ⏳)
+
+| Topic | 说明 | Demo |
+|:-----|:-----|:-----|
+| `reachy_mini/command` | 命令接口 | ⏳ 计划中 |
+| `reachy_mini/joint_positions` | 关节位置 | ⏳ 计划中 |
+| `reachy_mini/head_pose` | 头部姿态矩阵 | ⏳ 计划中 |
+
+### BLE (计划中 ⏳)
+
+| 命令 | 说明 | Demo |
+|:----|:-----|:-----|
+| PIN 验证 | 身份验证 | ⏳ 计划中 |
+| 状态查询 | 获取设备状态 | ⏳ 计划中 |
+| 热点重置 | 重置网络 | ⏳ 计划中 |
+
+---
+
 ## 🎯 Demo 说明
 
 | Demo | 功能 | API 接口 |
 |:----:|------|----------|
 | 🔊 **音频控制** | 扬声器/麦克风音量调节与测试 | `/api/volume/*` |
-| 🔄 **身体旋转** | 底座左右旋转控制 (±160°) | `/api/move/goto` |
-| 🫡 **点头动作** | 头部俯仰运动 | `/api/move/goto` |
-| 📢 **摇头动作** | 头部偏航运动 | `/api/move/goto` |
+| 🔄 **身体旋转** | 底座左右旋转控制 (±160°) | `/api/move/goto`、`/api/motors/*` |
+| 🫡 **点头动作** | 头部俯仰运动 | `/api/move/goto`、`/api/motors/*` |
+| 📢 **摇头动作** | 头部偏航运动 | `/api/move/goto`、`/api/motors/*` |
 
 ---
 

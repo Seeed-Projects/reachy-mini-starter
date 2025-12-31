@@ -111,14 +111,58 @@ The configuration file is included in `.gitignore` to protect your private infor
 
 ---
 
+## 🔌 API Interface Coverage
+
+### REST API (Implemented ✅)
+
+| Endpoint | Method | Description | Demo |
+|----------|--------|-------------|------|
+| `/move/goto` | POST | Smooth motion to target | [Body Rotation](demos/02_basic_body_rotation), [Nod Head](demos/03_basic_nod_head), [Shake Head](demos/04_basic_shake_head) |
+| `/move/set_target` | POST | Set target immediately | - |
+| `/move/goto_joint_positions` | POST | Joint space motion | - |
+| `/move/stop` | POST | Stop motion | All motion demos |
+| `/motors/set_mode/{mode}` | POST | Set motor mode | All motion demos |
+| `/volume/current` | GET | Get speaker volume | [Audio Control](demos/01_basic_audio_control) |
+| `/volume/set` | POST | Set speaker volume | [Audio Control](demos/01_basic_audio_control) |
+| `/volume/test-sound` | POST | Play test sound | [Audio Control](demos/01_basic_audio_control) |
+| `/volume/microphone/current` | GET | Get mic gain | [Audio Control](demos/01_basic_audio_control) |
+| `/volume/microphone/set` | POST | Set mic gain | [Audio Control](demos/01_basic_audio_control) |
+| `/state/full` | GET | Get full state | - |
+
+### WebSocket (Planned ⏳)
+
+| Endpoint | Description | Demo |
+|----------|-------------|------|
+| `/move/ws/set_target` | Real-time control (60Hz+) | ⏳ Planned |
+| `/state/ws/full` | State streaming | ⏳ Planned |
+| `/move/ws/updates` | Motion events | ⏳ Planned |
+
+### Zenoh (Planned ⏳)
+
+| Topic | Description | Demo |
+|-------|-------------|------|
+| `reachy_mini/command` | Command interface | ⏳ Planned |
+| `reachy_mini/joint_positions` | Joint positions | ⏳ Planned |
+| `reachy_mini/head_pose` | Head pose matrix | ⏳ Planned |
+
+### BLE (Planned ⏳)
+
+| Command | Description | Demo |
+|---------|-------------|------|
+| PIN verification | Authentication | ⏳ Planned |
+| Status query | Get device status | ⏳ Planned |
+| Hotspot reset | Reset network | ⏳ Planned |
+
+---
+
 ## 🎯 Demo Overview
 
-| Demo | Description | API Endpoint |
-|:----:|-----------|--------------|
+| Demo | Description | API Endpoints |
+|:----:|:-----------|:--------------|
 | 🔊 **Audio Control** | Speaker/microphone volume & testing | `/api/volume/*` |
-| 🔄 **Body Rotation** | Base rotation (±160°) | `/api/move/goto` |
-| 🫡 **Nod Head** | Head pitch motion | `/api/move/goto` |
-| 📢 **Shake Head** | Head yaw motion | `/api/move/goto` |
+| 🔄 **Body Rotation** | Base rotation (±160°) | `/api/move/goto`, `/api/motors/*` |
+| 🫡 **Nod Head** | Head pitch motion | `/api/move/goto`, `/api/motors/*` |
+| 📢 **Shake Head** | Head yaw motion | `/api/move/goto`, `/api/motors/*` |
 
 ---
 
