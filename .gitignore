@@ -6,6 +6,7 @@
 # 用户实际的配置文件 (包含IP地址、串口等私密信息)
 configs/robot_config.yaml
 configs/user_config.yaml
+demos/robot_config.yaml
 
 # === Python ===
 __pycache__/

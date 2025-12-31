@@ -6,6 +6,12 @@ body_yaw: 控制身体/底座偏航角，范围 ±160 度
 
 import requests
 import time
+import sys
+from pathlib import Path
+
+# 添加上级目录到路径以导入配置模块
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config_loader import get_config
 
 
 def rotate_base(count=3):
@@ -14,7 +20,8 @@ def rotate_base(count=3):
     Args:
         count: 旋转次数
     """
-    base_url = "http://10.42.0.75:8000/api"
+    config = get_config()
+    base_url = config.base_url
 
     print("=" * 50)
     print("Reachy Mini 底座旋转演示")

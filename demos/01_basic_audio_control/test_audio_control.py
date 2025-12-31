@@ -6,12 +6,24 @@
 
 import requests
 import json
+import sys
+from pathlib import Path
 from typing import Optional
+
+# 添加上级目录到路径以导入配置模块
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from config_loader import get_config
 
 class ReachyMiniAudioClient:
     """Reachy Mini 音频控制客户端"""
 
-    def __init__(self, robot_ip: str = "10.42.0.75", port: int = 8000):
+    def __init__(self, robot_ip: str = None, port: int = None):
+        # 如果未指定参数，从配置文件读取
+        if robot_ip is None or port is None:
+            config = get_config()
+            robot_ip = config.robot_ip
+            port = config.robot_port
+
         self.base_url = f"http://{robot_ip}:{port}/api"
         self._test_connection()
 
@@ -74,8 +86,8 @@ def main():
     print("Reachy Mini 音频控制")
     print("=" * 50)
 
-    # 初始化客户端
-    client = ReachyMiniAudioClient(robot_ip="10.42.0.75")
+    # 初始化客户端（从配置文件读取）
+    client = ReachyMiniAudioClient()
 
     print("\n----- 扬声器控制 -----")
 

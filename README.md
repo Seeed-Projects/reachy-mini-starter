@@ -31,8 +31,8 @@ reachy-mini-starter/
 pip install -r requirements.txt
 
 # 2. 配置机器人 IP
-cp configs/robot_config.yaml.template configs/robot_config.yaml
-# 编辑 configs/robot_config.yaml 修改 IP 地址
+cp demos/robot_config.yaml.template demos/robot_config.yaml
+# 编辑 demos/robot_config.yaml 修改机器人 IP 地址
 
 # 3. 运行基础控制 Demo
 python demos/01_basic_audio_control/test_audio_control.py
@@ -40,6 +40,18 @@ python demos/02_basic_body_rotation/test_body_rotation.py
 python demos/03_basic_nod_head/test_nod_head.py
 python demos/04_basic_shake_head/test_shake_head.py
 ```
+
+## 配置说明
+
+所有 Demo 共用同一个配置文件 `demos/robot_config.yaml`，只需配置一次即可：
+
+```yaml
+robot:
+  ip: "10.42.0.75"    # 修改为你的机器人 IP
+  port: 8000
+```
+
+配置文件已被 `.gitignore` 忽略，不会提交到仓库。
 
 ## 基础控制 Demo
 

@@ -1,0 +1,21 @@
+# Reachy Mini 机器人配置文件
+# 复制此文件为 robot_config.yaml 并修改配置
+
+# 机器人连接配置
+robot:
+  # 机器人 IP 地址
+  ip: "10.42.0.75"
+
+  # API 端口
+  port: 8000
+
+# 可选: 日志配置
+logging:
+  # 日志级别: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+
+  # 是否输出到文件
+  to_file: false
+
+  # 日志文件路径 (当 to_file 为 true 时生效)
+  file_path: "logs/reachy_mini.log"
