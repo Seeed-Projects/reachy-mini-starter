@@ -1,131 +1,169 @@
-# Reachy Mini Starter Kit
+<div align="center">
 
-Python development framework for Reachy Mini robot based on official API, providing basic control interfaces and complete example code.
+# 🤖 Reachy Mini Starter Kit
+
+**基于官方 API 的 Reachy Mini 机器人 Python 开发框架**
+
+[![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+提供基础控制接口和完整示例代码的 Python 开发框架
+
+**中文** | [English](README.md)
+
+</div>
 
 ---
 
-[中文版](README.md) | **English**
+## ✨ 特性
+
+- 🎯 **统一配置管理** - 一处配置，全局使用
+- 🎮 **完整基础 Demo** - 音频控制、身体旋转、头部动作
+- 📚 **详细开发文档** - 完整的 API 参考和中英文使用指南
+- 🚀 **AI 扩展就绪** - 为后续 Agent 和 LLM 集成预留扩展接口
 
 ---
 
-## Features
-
-- Unified configuration management system - configure once, use globally
-- Complete basic control demos covering audio, motion and other core functions
-- Detailed API development documentation and usage guides
-- Extension interfaces reserved for future Agent and LLM integration
-
-## Project Structure
+## 📁 项目结构
 
 ```
 reachy-mini-starter/
-├── src/                          # Core library
-│   ├── connection.py             # Connection management
-│   ├── config.py                 # Configuration management
-│   ├── logger.py                 # Logging system
-│   └── utils.py                  # Utility functions
-├── demos/                        # Basic control demos
-│   ├── config_loader.py          # Configuration loader
-│   ├── robot_config.yaml.template # Configuration template
-│   ├── 01_basic_audio_control/   # Audio control
-│   ├── 02_basic_body_rotation/   # Body rotation
-│   ├── 03_basic_nod_head/        # Nod head motion
-│   └── 04_basic_shake_head/      # Shake head motion
-├── docs/                         # Documentation
-│   ├── API_REFERENCE_CN.md       # API reference (Chinese)
-│   ├── USAGE_GUIDE_CN.md         # Usage guide (Chinese)
-│   ├── NETWORK_GUIDE_CN.md       # Network guide (Chinese)
-│   ├── API_REFERENCE.md          # API reference (English)
-│   ├── USAGE_GUIDE.md            # Usage guide (English)
-│   └── NETWORK_GUIDE.md          # Network guide (English)
-├── configs/                      # Configuration directory
-├── scripts/                      # Utility scripts
-└── requirements.txt              # Dependencies
+├── src/                          # 核心库
+│   ├── connection.py             # 连接管理
+│   ├── config.py                 # 配置管理
+│   ├── logger.py                 # 日志系统
+│   └── utils.py                  # 工具函数
+├── demos/                        # 基础控制演示
+│   ├── config_loader.py          # 配置加载器
+│   ├── robot_config.yaml.template # 配置模板
+│   ├── 01_basic_audio_control/   # 🔊 音频控制
+│   ├── 02_basic_body_rotation/   # 🔄 身体旋转
+│   ├── 03_basic_nod_head/        # 🫡 点头动作
+│   └── 04_basic_shake_head/      # 📢 摇头动作
+├── docs/                         # 文档
+│   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
+│   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
+│   ├── NETWORK_GUIDE_CN.md       # 网络配置（中文）
+│   ├── API_REFERENCE.md          # API 参考文档（English）
+│   ├── USAGE_GUIDE.md            # 使用指南（English）
+│   └── NETWORK_GUIDE.md          # 网络配置（English）
+├── configs/                      # 配置文件目录
+├── scripts/                      # 工具脚本
+└── requirements.txt              # 依赖包
 ```
 
-## Quick Start
+---
 
-### Prerequisites
+## 🚀 快速开始
+
+### 前置要求
 
 - Python 3.7+
-- Reachy Mini robot (connected to same network)
+- Reachy Mini 机器人（已连接同一网络）
 
-### Installation & Configuration
+### 安装与配置
 
 ```bash
-# 1. Install dependencies
+# 克隆仓库
+git clone https://github.com/yourusername/reachy-mini-starter.git
+cd reachy-mini-starter
+
+# 安装依赖
 pip install -r requirements.txt
 
-# 2. Create configuration file
+# 创建配置文件
 cp demos/robot_config.yaml.template demos/robot_config.yaml
 
-# 3. Edit configuration file, update robot IP address
-vim demos/robot_config.yaml
+# 编辑配置文件，修改机器人 IP 地址
+# vim demos/robot_config.yaml  (或使用你喜欢的编辑器)
 ```
 
-Configuration file content:
-
+**配置文件内容 (`demos/robot_config.yaml`)：**
 ```yaml
 robot:
-  ip: "10.42.0.75"    # Change to your robot's actual IP
+  ip: "10.42.0.75"    # 修改为你的机器人实际 IP
   port: 8000
 ```
 
-### Run Demos
+### 运行 Demo
 
 ```bash
-# Audio control - Speaker/microphone volume adjustment
+# 🎵 音频控制 - 扬声器/麦克风音量调节
 python demos/01_basic_audio_control/test_audio_control.py
 
-# Body rotation - Base left/right rotation
+# 🔄 身体旋转 - 底座左右转动 (±160°)
 python demos/02_basic_body_rotation/test_body_rotation.py
 
-# Nod head - Head up/down motion
+# 🫡 点头动作 - 头部上下运动
 python demos/03_basic_nod_head/test_nod_head.py
 
-# Shake head - Head left/right motion
+# 📢 摇头动作 - 头部左右转动
 python demos/04_basic_shake_head/test_shake_head.py
 ```
 
-## Configuration
+---
 
-All demos share the `demos/robot_config.yaml` configuration file - configure only once.
+## 📖 配置说明
 
-The configuration file is included in `.gitignore` and will not be committed to the repository to protect private information.
+所有 Demo 共用 `demos/robot_config.yaml` 配置文件，只需配置一次即可。
 
-## Demo Overview
+配置文件已加入 `.gitignore`，不会被提交到仓库，保护隐私信息。
 
-| Demo | Function | API Interface |
-|------|----------|---------------|
-| Audio Control | Speaker/microphone volume adjustment and testing | `/api/volume/*` |
-| Body Rotation | Base left/right rotation control (±160°) | `/api/move/goto` |
-| Nod Head | Head pitch motion | `/api/move/goto` |
-| Shake Head | Head yaw motion | `/api/move/goto` |
+---
 
-## Documentation
+## 🎯 Demo 说明
 
-### English Documentation
+| Demo | 功能 | API 接口 |
+|:----:|------|----------|
+| 🔊 **音频控制** | 扬声器/麦克风音量调节与测试 | `/api/volume/*` |
+| 🔄 **身体旋转** | 底座左右旋转控制 (±160°) | `/api/move/goto` |
+| 🫡 **点头动作** | 头部俯仰运动 | `/api/move/goto` |
+| 📢 **摇头动作** | 头部偏航运动 | `/api/move/goto` |
 
-- [API Reference Guide](docs/API_REFERENCE.md) - Complete REST API reference
-- [Usage and Debugging Guide](docs/USAGE_GUIDE.md) - Detailed usage instructions
-- [Network Configuration Guide](docs/NETWORK_GUIDE.md) - Network setup steps
+---
+
+## 📚 文档
 
 ### 中文文档
 
-- [API 接口开发指南](docs/API_REFERENCE_CN.md) - 完整的 REST API 参考文档
-- [使用修改指南](docs/USAGE_GUIDE_CN.md) - 详细的使用说明和修改建议
-- [连接配网指南](docs/NETWORK_GUIDE_CN.md) - 网络连接配置步骤
+- 📘 [API 接口开发指南](docs/API_REFERENCE_CN.md) - 完整的 REST API 参考文档
+- 📗 [使用修改指南](docs/USAGE_GUIDE_CN.md) - 详细的使用说明和调试方法
+- 📙 [连接配网指南](docs/NETWORK_GUIDE_CN.md) - 网络连接配置步骤
 
-## Roadmap
+### English Documentation
 
-Current version provides basic control interfaces. Future plans:
+- 📘 [API Reference Guide](docs/API_REFERENCE.md) - Complete REST API reference
+- 📗 [Usage and Debugging Guide](docs/USAGE_GUIDE.md) - Detailed usage instructions
+- 📙 [Network Configuration Guide](docs/NETWORK_GUIDE.md) - Network setup steps
 
-- [ ] **Agent Integration** - Combine AI Agent for intelligent decision-making and behavior planning
-- [ ] **LLM Integration** - Integrate Large Language Models for natural language interaction
-- [ ] **Vision System** - Add camera visual recognition capabilities
-- [ ] **Voice Interaction** - Integrate speech recognition and synthesis
-- [ ] **Emotional Expression** - Emotional motion expression based on internal states
+---
 
-## License
+## 🗺️ 开发路线
 
-See [LICENSE](LICENSE) file
+当前版本为基础控制接口，后续计划：
+
+- [ ] 🤖 **Agent 集成** - 结合 AI Agent 实现智能决策和行为规划
+- [ ] 🧠 **LLM 集成** - 接入大语言模型实现自然语言交互
+- [ ] 👁️ **视觉系统** - 添加摄像头视觉识别能力
+- [ ] 🎤 **语音交互** - 集成语音识别和语音合成
+- [ ] 😊 **情感表达** - 基于内部状态的情感化动作表达
+
+---
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+
+---
+
+## 🤝 贡献
+
+欢迎贡献！请随时提交 Pull Request。
+
+---
+
+<div align="center">
+
+**用 ❤️ 为 Reachy Mini 社区构建**
+
+</div>
