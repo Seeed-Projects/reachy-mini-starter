@@ -189,3 +189,39 @@ A: 检查：
 1. Ubuntu 电脑是否已连接互联网
 2. Ubuntu 防火墙/NAT 设置
 3. DNS 解析是否正常
+
+
+#######
+#######
+
+
+
+第一步：找到有线连接的名字
+在终端输入：
+
+Bash
+
+nmcli connection show
+你会看到类似这样的列表：
+
+Plaintext
+
+NAME                UUID                                  TYPE      DEVICE 
+Wired connection 1  xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  ethernet  eth1   
+HotspotName         xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  wifi      wlan0
+请记下 DEVICE 列为 eth1 的那一行的 NAME（通常叫 Wired connection 1 或者 ethernet-eth1）。
+
+第二步：修改配置 (关键)
+假设你的有线连接名字叫 "Wired connection 1" (请替换成你实际的名字)，执行这条命令：
+
+Bash
+
+# 设置 eth1：只用于局域网，不作为默认网关
+sudo nmcli connection modify "Wired connection 1" ipv4.never-default yes
+
+# 如果你也用 IPv6，建议把 IPv6 也设置一下
+sudo nmcli connection modify "Wired connection 1" ipv6.never-default yes
+第三步：重启连接生效
+Bash
+
+sudo nmcli connection up "Wired connection 1"

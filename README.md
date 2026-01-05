@@ -18,7 +18,7 @@ A clean, well-documented Python framework for controlling Reachy Mini robots wit
 ## ✨ Features
 
 - 🎯 **Unified Configuration** - Configure once, use everywhere
-- 🎮 **Complete Demos** - Audio control, body rotation, head motions
+- 🎮 **Complete Demos** - Audio control, body rotation, head motions, video streaming
 - 📚 **Comprehensive Docs** - Full API reference and usage guides in EN/CN
 - 🚀 **Ready for AI** - Extensible interfaces for Agent and LLM integration
 
@@ -39,14 +39,18 @@ reachy-mini-starter/
 │   ├── 01_basic_audio_control/   # 🔊 Audio control
 │   ├── 02_basic_body_rotation/   # 🔄 Body rotation
 │   ├── 03_basic_nod_head/        # 🫡 Nod head motion
-│   └── 04_basic_shake_head/      # 📢 Shake head motion
+│   ├── 04_basic_shake_head/      # 📢 Shake head motion
+│   ├── 05_webrtc_video_stream/   # 📹 WebRTC video streaming
+│   └── 06_zenoh_basic_control/   # ⚡ Zenoh protocol control
 ├── docs/                         # Documentation
 │   ├── API_REFERENCE.md          # API reference (EN)
 │   ├── USAGE_GUIDE.md            # Usage guide (EN)
 │   ├── NETWORK_GUIDE.md          # Network guide (EN)
+│   ├── GSTREAMER.md              # GStreamer installation (EN)
 │   ├── API_REFERENCE_CN.md       # API reference (中文)
 │   ├── USAGE_GUIDE_CN.md         # Usage guide (中文)
-│   └── NETWORK_GUIDE_CN.md       # Network guide (中文)
+│   ├── NETWORK_GUIDE_CN.md       # Network guide (中文)
+│   └── GSTREAMER_CN.md           # GStreamer 安装指南 (中文)
 ├── configs/                      # Configuration files
 ├── scripts/                      # Utility scripts
 └── requirements.txt              # Dependencies
@@ -99,6 +103,12 @@ python demos/03_basic_nod_head/test_nod_head.py
 
 # 📢 Shake Head - Head left/right motion
 python demos/04_basic_shake_head/test_shake_head.py
+
+# 📹 WebRTC Video Stream - Receive video/audio from robot
+python3 demos/05_webrtc_video_stream/05.py --signaling-host 10.42.0.75
+
+# ⚡ Zenoh Control - Low-latency control via Zenoh protocol
+python3 demos/06_zenoh_basic_control/test_zenoh_control.py
 ```
 
 ---
@@ -128,8 +138,9 @@ The configuration file is included in `.gitignore` to protect your private infor
 | `/volume/microphone/current` | GET | Get mic gain | [Audio Control](demos/01_basic_audio_control) |
 | `/volume/microphone/set` | POST | Set mic gain | [Audio Control](demos/01_basic_audio_control) |
 | `/state/full` | GET | Get full state | - |
+| `/ws/signaling` | WS | WebRTC signaling | [Video Stream](demos/05_webrtc_video_stream) |
 
-### WebSocket (Planned ⏳)
+### WebSocket (Implemented ✅)
 
 | Endpoint | Description | Demo |
 |----------|-------------|------|
@@ -137,13 +148,11 @@ The configuration file is included in `.gitignore` to protect your private infor
 | `/state/ws/full` | State streaming | ⏳ Planned |
 | `/move/ws/updates` | Motion events | ⏳ Planned |
 
-### Zenoh (Planned ⏳)
+### Zenoh (Implemented ✅)
 
 | Topic | Description | Demo |
 |-------|-------------|------|
-| `reachy_mini/command` | Command interface | ⏳ Planned |
-| `reachy_mini/joint_positions` | Joint positions | ⏳ Planned |
-| `reachy_mini/head_pose` | Head pose matrix | ⏳ Planned |
+| `reachy_mini/command` | Command interface | [Zenoh Control](demos/06_zenoh_basic_control) |
 
 ### BLE (Planned ⏳)
 
@@ -175,6 +184,8 @@ The configuration file is included in `.gitignore` to protect your private infor
 | 🔄 **Body Rotation** | Base rotation (±160°) | `/api/move/goto`, `/api/motors/*` |
 | 🫡 **Nod Head** | Head pitch motion | `/api/move/goto`, `/api/motors/*` |
 | 📢 **Shake Head** | Head yaw motion | `/api/move/goto`, `/api/motors/*` |
+| 📹 **WebRTC Video** | Real-time video/audio streaming | `/ws/signaling` |
+| ⚡ **Zenoh Control** | Low-latency protocol control | `reachy_mini/command` |
 
 ---
 
@@ -185,12 +196,14 @@ The configuration file is included in `.gitignore` to protect your private infor
 - 📘 [API Reference Guide](docs/API_REFERENCE.md) - Complete REST API reference
 - 📗 [Usage and Debugging Guide](docs/USAGE_GUIDE.md) - Detailed usage instructions
 - 📙 [Network Configuration Guide](docs/NETWORK_GUIDE.md) - Network setup steps
+- 📺 [GStreamer Installation Guide](docs/GSTREAMER.md) - WebRTC video streaming setup
 
 ### 中文
 
 - 📘 [API 接口开发指南](docs/API_REFERENCE_CN.md) - 完整的 REST API 参考文档
 - 📗 [使用修改指南](docs/USAGE_GUIDE_CN.md) - 详细的使用说明和调试方法
 - 📙 [连接配网指南](docs/NETWORK_GUIDE_CN.md) - 网络连接配置步骤
+- 📺 [GStreamer 安装指南](docs/GSTREAMER_CN.md) - WebRTC 视频流安装配置
 
 ---
 

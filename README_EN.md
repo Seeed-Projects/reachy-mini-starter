@@ -18,7 +18,7 @@
 ## ✨ 特性
 
 - 🎯 **统一配置管理** - 一处配置，全局使用
-- 🎮 **完整基础 Demo** - 音频控制、身体旋转、头部动作
+- 🎮 **完整基础 Demo** - 音频控制、身体旋转、头部动作、视频流
 - 📚 **详细开发文档** - 完整的 API 参考和中英文使用指南
 - 🚀 **AI 扩展就绪** - 为后续 Agent 和 LLM 集成预留扩展接口
 
@@ -39,14 +39,18 @@ reachy-mini-starter/
 │   ├── 01_basic_audio_control/   # 🔊 音频控制
 │   ├── 02_basic_body_rotation/   # 🔄 身体旋转
 │   ├── 03_basic_nod_head/        # 🫡 点头动作
-│   └── 04_basic_shake_head/      # 📢 摇头动作
+│   ├── 04_basic_shake_head/      # 📢 摇头动作
+│   ├── 05_webrtc_video_stream/   # 📹 WebRTC 视频流
+│   └── 06_zenoh_basic_control/   # ⚡ Zenoh 协议控制
 ├── docs/                         # 文档
 │   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
 │   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
 │   ├── NETWORK_GUIDE_CN.md       # 网络配置（中文）
+│   ├── GSTREAMER_CN.md           # GStreamer 安装指南（中文）
 │   ├── API_REFERENCE.md          # API 参考文档（English）
 │   ├── USAGE_GUIDE.md            # 使用指南（English）
-│   └── NETWORK_GUIDE.md          # 网络配置（English）
+│   ├── NETWORK_GUIDE.md          # 网络配置（English）
+│   └── GSTREAMER.md              # GStreamer 安装指南（English）
 ├── configs/                      # 配置文件目录
 ├── scripts/                      # 工具脚本
 └── requirements.txt              # 依赖包
@@ -99,6 +103,12 @@ python demos/03_basic_nod_head/test_nod_head.py
 
 # 📢 摇头动作 - 头部左右转动
 python demos/04_basic_shake_head/test_shake_head.py
+
+# 📹 WebRTC 视频流 - 接收机器人视频/音频流
+python3 demos/05_webrtc_video_stream/05.py --signaling-host 10.42.0.75
+
+# ⚡ Zenoh 控制 - 通过 Zenoh 协议进行低延迟控制
+python3 demos/06_zenoh_basic_control/test_zenoh_control.py
 ```
 
 ---
@@ -128,8 +138,9 @@ python demos/04_basic_shake_head/test_shake_head.py
 | `/volume/microphone/current` | GET | 获取麦克风增益 | [音频控制](demos/01_basic_audio_control) |
 | `/volume/microphone/set` | POST | 设置麦克风增益 | [音频控制](demos/01_basic_audio_control) |
 | `/state/full` | GET | 获取完整状态 | - |
+| `/ws/signaling` | WS | WebRTC 信令 | [视频流](demos/05_webrtc_video_stream) |
 
-### WebSocket (计划中 ⏳)
+### WebSocket (已实现 ✅)
 
 | 接口 | 说明 | Demo |
 |:----|:-----|:-----|
@@ -137,13 +148,11 @@ python demos/04_basic_shake_head/test_shake_head.py
 | `/state/ws/full` | 状态流 | ⏳ 计划中 |
 | `/move/ws/updates` | 运动事件 | ⏳ 计划中 |
 
-### Zenoh (计划中 ⏳)
+### Zenoh (已实现 ✅)
 
 | Topic | 说明 | Demo |
 |:-----|:-----|:-----|
-| `reachy_mini/command` | 命令接口 | ⏳ 计划中 |
-| `reachy_mini/joint_positions` | 关节位置 | ⏳ 计划中 |
-| `reachy_mini/head_pose` | 头部姿态矩阵 | ⏳ 计划中 |
+| `reachy_mini/command` | 命令接口 | [Zenoh 控制](demos/06_zenoh_basic_control) |
 
 ### BLE (计划中 ⏳)
 
@@ -175,6 +184,8 @@ python demos/04_basic_shake_head/test_shake_head.py
 | 🔄 **身体旋转** | 底座左右旋转控制 (±160°) | `/api/move/goto`、`/api/motors/*` |
 | 🫡 **点头动作** | 头部俯仰运动 | `/api/move/goto`、`/api/motors/*` |
 | 📢 **摇头动作** | 头部偏航运动 | `/api/move/goto`、`/api/motors/*` |
+| 📹 **WebRTC 视频** | 实时视频/音频流接收 | `/ws/signaling` |
+| ⚡ **Zenoh 控制** | 低延迟协议控制 | `reachy_mini/command` |
 
 ---
 
@@ -185,12 +196,14 @@ python demos/04_basic_shake_head/test_shake_head.py
 - 📘 [API 接口开发指南](docs/API_REFERENCE_CN.md) - 完整的 REST API 参考文档
 - 📗 [使用修改指南](docs/USAGE_GUIDE_CN.md) - 详细的使用说明和调试方法
 - 📙 [连接配网指南](docs/NETWORK_GUIDE_CN.md) - 网络连接配置步骤
+- 📺 [GStreamer 安装指南](docs/GSTREAMER_CN.md) - WebRTC 视频流安装配置
 
 ### English Documentation
 
 - 📘 [API Reference Guide](docs/API_REFERENCE.md) - Complete REST API reference
 - 📗 [Usage and Debugging Guide](docs/USAGE_GUIDE.md) - Detailed usage instructions
 - 📙 [Network Configuration Guide](docs/NETWORK_GUIDE.md) - Network setup steps
+- 📺 [GStreamer Installation Guide](docs/GSTREAMER.md) - WebRTC video streaming setup
 
 ---
 
