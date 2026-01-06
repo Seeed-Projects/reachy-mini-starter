@@ -46,7 +46,8 @@ reachy-mini-starter/
 │   ├── 08_audio_stream_api/      # 🎶 REST API audio streaming service
 │   ├── 09_mic_stream_to_pc/      # 🎙️ Microphone stream to PC
 │   ├── 10_vision_algorithms/     # 👁️ OpenCV vision algorithms (face/motion/edge/color/corner detection)
-│   └── 11_yolo_robot_control/    # 🤖 YOLO detection + Zenoh robot control
+│   ├── 11_yolo_robot_control/    # 🤖 YOLO detection + Zenoh robot control
+│   └── 12_antenna_angle_monitoring/ # 📡 Antenna servo angle monitoring
 ├── docs/                         # Documentation
 │   ├── API_REFERENCE.md          # API reference (EN)
 │   ├── USAGE_GUIDE.md            # Usage guide (EN)
@@ -133,6 +134,9 @@ python3 demos/10_vision_algorithms/10.py --signaling-host 10.42.0.75
 
 # 🤖 YOLO + Robot Control - YOLO detection with Zenoh robot control
 python3 demos/11_yolo_robot_control/11.py --signaling-host 10.42.0.75
+
+# 📡 Antenna Angle Monitoring - Query antenna servo angles via REST API
+python demos/12_antenna_angle_monitoring/test_antenna_rest.py
 ```
 
 ---
@@ -161,7 +165,8 @@ The configuration file is included in `.gitignore` to protect your private infor
 | `/volume/test-sound` | POST | Play test sound | [Audio Control](demos/01_basic_audio_control) |
 | `/volume/microphone/current` | GET | Get mic gain | [Audio Control](demos/01_basic_audio_control) |
 | `/volume/microphone/set` | POST | Set mic gain | [Audio Control](demos/01_basic_audio_control) |
-| `/state/full` | GET | Get full state | - |
+| `/state/present_antenna_joint_positions` | GET | Get antenna angles | [Antenna Monitoring](demos/12_antenna_angle_monitoring) |
+| `/state/full` | GET | Get full state | [Antenna Monitoring](demos/12_antenna_angle_monitoring) |
 | `/ws/signaling` | WS | WebRTC signaling | [Video Stream](demos/05_webrtc_video_stream) |
 
 ### WebSocket (Implemented ✅)
@@ -215,6 +220,7 @@ The configuration file is included in `.gitignore` to protect your private infor
 | 🎙️ **Mic Stream** | Stream mic audio from robot to PC | WebSocket (port 8002) |
 | 👁️ **Vision Algorithms** | OpenCV algorithms (face/motion/edge/color/corner) | N/A (PC only) |
 | 🤖 **YOLO + Control** | YOLO detection + Zenoh robot control | `reachy_mini/command` |
+| 📡 **Antenna Monitor** | Query antenna servo angles via REST API | `/api/state/*` |
 
 ---
 
@@ -242,6 +248,7 @@ Current version provides basic control interfaces. Future plans:
 
 - [x] 👁️ **Vision System** - Camera-based visual recognition
 - [x] 🤖 **YOLO Integration** - Object detection with robot control
+- [x] 📡 **State Monitoring** - Antenna servo angle monitoring
 - [ ] 🤖 **Agent Integration** - AI Agent for intelligent decision-making
 - [ ] 🧠 **LLM Integration** - Natural language interaction
 - [ ] 🎤 **Voice Interaction** - Speech recognition and synthesis

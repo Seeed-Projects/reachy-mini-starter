@@ -43,7 +43,11 @@ reachy-mini-starter/
 │   ├── 05_webrtc_video_stream/   # 📹 WebRTC 视频流
 │   ├── 06_zenoh_basic_control/   # ⚡ Zenoh 协议控制
 │   ├── 07_audio_player/          # 🎵 本地音频播放器
-│   └── 08_audio_stream_api/      # 🎶 REST API 音频流服务
+│   ├── 08_audio_stream_api/      # 🎶 REST API 音频流服务
+│   ├── 09_mic_stream_to_pc/      # 🎙️ 麦克风流传输到 PC
+│   ├── 10_vision_algorithms/     # 👁️ OpenCV 视觉算法（人脸/运动/边缘/颜色/角点检测）
+│   ├── 11_yolo_robot_control/    # 🤖 YOLO 检测 + Zenoh 机器人控制
+│   └── 12_antenna_angle_monitoring/ # 📡 天线舵机角度监控
 ├── docs/                         # 文档
 │   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
 │   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
@@ -117,6 +121,16 @@ python3 demos/07_audio_player/audio_player.py --file /path/to/audio.wav
 
 # 🎶 音频流 API 服务 - 启动 REST API 服务（运行在机器人上）
 python3 demos/08_audio_stream_api/audio_stream_server.py
+
+# 🎙️ 麦克风流传输 - 将麦克风音频推流到 PC（服务端运行在机器人上）
+# 第一步：在 Reachy Mini 上启动服务端
+python3 demos/09_mic_stream_to_pc/bidirectional_audio_server.py
+
+# 第二步：在 PC 上接收流
+python3 demos/09_mic_stream_to_pc/receive_mic_stream.py
+
+# 📡 天线角度监控 - 通过 REST API 查询天线舵机角度
+python demos/12_antenna_angle_monitoring/test_antenna_rest.py
 ```
 
 ---
@@ -145,7 +159,8 @@ python3 demos/08_audio_stream_api/audio_stream_server.py
 | `/volume/test-sound` | POST | 播放测试音 | [音频控制](demos/01_basic_audio_control) |
 | `/volume/microphone/current` | GET | 获取麦克风增益 | [音频控制](demos/01_basic_audio_control) |
 | `/volume/microphone/set` | POST | 设置麦克风增益 | [音频控制](demos/01_basic_audio_control) |
-| `/state/full` | GET | 获取完整状态 | - |
+| `/state/present_antenna_joint_positions` | GET | 获取天线角度 | [天线监控](demos/12_antenna_angle_monitoring) |
+| `/state/full` | GET | 获取完整状态 | [天线监控](demos/12_antenna_angle_monitoring) |
 | `/ws/signaling` | WS | WebRTC 信令 | [视频流](demos/05_webrtc_video_stream) |
 
 ### WebSocket (已实现 ✅)
@@ -196,6 +211,10 @@ python3 demos/08_audio_stream_api/audio_stream_server.py
 | ⚡ **Zenoh 控制** | 低延迟协议控制 | `reachy_mini/command` |
 | 🎵 **音频播放器** | 播放本地/在线音频文件（机器人上） | N/A（运行在机器人上） |
 | 🎶 **音频流 API** | REST API 远程音频控制与实时推流 | 自定义 API（端口 8001） |
+| 🎙️ **麦克风流** | 将机器人麦克风音频推流到 PC | WebSocket（端口 8002） |
+| 👁️ **视觉算法** | OpenCV 视觉算法（人脸/运动/边缘/颜色/角点） | N/A（仅 PC） |
+| 🤖 **YOLO + 控制** | YOLO 检测 + Zenoh 机器人控制 | `reachy_mini/command` |
+| 📡 **天线监控** | 通过 REST API 查询天线舵机角度 | `/api/state/*` |
 
 ---
 
@@ -221,9 +240,11 @@ python3 demos/08_audio_stream_api/audio_stream_server.py
 
 当前版本为基础控制接口，后续计划：
 
+- [x] 👁️ **视觉系统** - 摄像头视觉识别能力
+- [x] 🤖 **YOLO 集成** - 物体检测与机器人控制
+- [x] 📡 **状态监控** - 天线舵机角度查询
 - [ ] 🤖 **Agent 集成** - 结合 AI Agent 实现智能决策和行为规划
 - [ ] 🧠 **LLM 集成** - 接入大语言模型实现自然语言交互
-- [ ] 👁️ **视觉系统** - 添加摄像头视觉识别能力
 - [ ] 🎤 **语音交互** - 集成语音识别和语音合成
 - [ ] 😊 **情感表达** - 基于内部状态的情感化动作表达
 
