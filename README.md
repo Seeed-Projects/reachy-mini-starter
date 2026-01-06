@@ -41,7 +41,9 @@ reachy-mini-starter/
 │   ├── 03_basic_nod_head/        # 🫡 Nod head motion
 │   ├── 04_basic_shake_head/      # 📢 Shake head motion
 │   ├── 05_webrtc_video_stream/   # 📹 WebRTC video streaming
-│   └── 06_zenoh_basic_control/   # ⚡ Zenoh protocol control
+│   ├── 06_zenoh_basic_control/   # ⚡ Zenoh protocol control
+│   ├── 07_audio_player/          # 🎵 Local audio player
+│   └── 08_audio_stream_api/      # 🎶 REST API audio streaming service
 ├── docs/                         # Documentation
 │   ├── API_REFERENCE.md          # API reference (EN)
 │   ├── USAGE_GUIDE.md            # Usage guide (EN)
@@ -109,6 +111,12 @@ python3 demos/05_webrtc_video_stream/05.py --signaling-host 10.42.0.75
 
 # ⚡ Zenoh Control - Low-latency control via Zenoh protocol
 python3 demos/06_zenoh_basic_control/test_zenoh_control.py
+
+# 🎵 Audio Player - Play local/online audio files (runs on robot)
+python3 demos/07_audio_player/audio_player.py --file /path/to/audio.wav
+
+# 🎶 Audio Stream API - Start REST API service (runs on robot)
+python3 demos/08_audio_stream_api/audio_stream_server.py
 ```
 
 ---
@@ -186,6 +194,8 @@ The configuration file is included in `.gitignore` to protect your private infor
 | 📢 **Shake Head** | Head yaw motion | `/api/move/goto`, `/api/motors/*` |
 | 📹 **WebRTC Video** | Real-time video/audio streaming | `/ws/signaling` |
 | ⚡ **Zenoh Control** | Low-latency protocol control | `reachy_mini/command` |
+| 🎵 **Audio Player** | Play local/online audio files (on robot) | N/A (runs on robot) |
+| 🎶 **Audio Stream API** | REST API for remote audio control & streaming | Custom API (port 8001) |
 
 ---
 

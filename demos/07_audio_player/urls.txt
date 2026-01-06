@@ -1,0 +1,21 @@
+# 示例音频源 / Example Audio Sources
+
+# 本地文件示例 (请根据实际情况修改路径)
+# Local file examples (modify paths according to your setup)
+
+# /home/user/music.wav
+# /home/user/speech.mp3
+# /path/to/your/audio.flac
+
+
+# 在线音频示例
+# Online audio examples
+
+# 免费音效网站 Freesound:
+# https://freesound.org/data/previews/xxx/xxx-xxx-preview.wav
+
+# 示例测试音频 (16kHz 采样率推荐):
+# https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg
+
+# 更多测试音频:
+# http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/Samples.html

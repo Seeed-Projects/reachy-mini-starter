@@ -41,7 +41,9 @@ reachy-mini-starter/
 │   ├── 03_basic_nod_head/        # 🫡 点头动作
 │   ├── 04_basic_shake_head/      # 📢 摇头动作
 │   ├── 05_webrtc_video_stream/   # 📹 WebRTC 视频流
-│   └── 06_zenoh_basic_control/   # ⚡ Zenoh 协议控制
+│   ├── 06_zenoh_basic_control/   # ⚡ Zenoh 协议控制
+│   ├── 07_audio_player/          # 🎵 本地音频播放器
+│   └── 08_audio_stream_api/      # 🎶 REST API 音频流服务
 ├── docs/                         # 文档
 │   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
 │   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
@@ -109,6 +111,12 @@ python3 demos/05_webrtc_video_stream/05.py --signaling-host 10.42.0.75
 
 # ⚡ Zenoh 控制 - 通过 Zenoh 协议进行低延迟控制
 python3 demos/06_zenoh_basic_control/test_zenoh_control.py
+
+# 🎵 音频播放器 - 播放本地/在线音频文件（运行在机器人上）
+python3 demos/07_audio_player/audio_player.py --file /path/to/audio.wav
+
+# 🎶 音频流 API 服务 - 启动 REST API 服务（运行在机器人上）
+python3 demos/08_audio_stream_api/audio_stream_server.py
 ```
 
 ---
@@ -186,6 +194,8 @@ python3 demos/06_zenoh_basic_control/test_zenoh_control.py
 | 📢 **摇头动作** | 头部偏航运动 | `/api/move/goto`、`/api/motors/*` |
 | 📹 **WebRTC 视频** | 实时视频/音频流接收 | `/ws/signaling` |
 | ⚡ **Zenoh 控制** | 低延迟协议控制 | `reachy_mini/command` |
+| 🎵 **音频播放器** | 播放本地/在线音频文件（机器人上） | N/A（运行在机器人上） |
+| 🎶 **音频流 API** | REST API 远程音频控制与实时推流 | 自定义 API（端口 8001） |
 
 ---
 
