@@ -79,15 +79,21 @@ Thumbs.db
 *.bak
 
 # === 模型文件 & 数据 ===
+# YOLO 模型 (自动下载，不提交到仓库)
 *.pkl
 *.pth
 *.pt
 *.onnx
 *.h5
 *.hdf5
+yolov8*.pt
+yolov5*.pt
+yolo*.pt
 models/
 data/
 dataset/
+ultralytics/
+.cache/
 
 # === API密钥 & 敏感信息 ===
 .env

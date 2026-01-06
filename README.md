@@ -43,7 +43,10 @@ reachy-mini-starter/
 │   ├── 05_webrtc_video_stream/   # 📹 WebRTC video streaming
 │   ├── 06_zenoh_basic_control/   # ⚡ Zenoh protocol control
 │   ├── 07_audio_player/          # 🎵 Local audio player
-│   └── 08_audio_stream_api/      # 🎶 REST API audio streaming service
+│   ├── 08_audio_stream_api/      # 🎶 REST API audio streaming service
+│   ├── 09_mic_stream_to_pc/      # 🎙️ Microphone stream to PC
+│   ├── 10_vision_algorithms/     # 👁️ OpenCV vision algorithms (face/motion/edge/color/corner detection)
+│   └── 11_yolo_robot_control/    # 🤖 YOLO detection + Zenoh robot control
 ├── docs/                         # Documentation
 │   ├── API_REFERENCE.md          # API reference (EN)
 │   ├── USAGE_GUIDE.md            # Usage guide (EN)
@@ -117,6 +120,19 @@ python3 demos/07_audio_player/audio_player.py --file /path/to/audio.wav
 
 # 🎶 Audio Stream API - Start REST API service (runs on robot)
 python3 demos/08_audio_stream_api/audio_stream_server.py
+
+# 🎙️ Microphone Stream - Stream mic audio to PC (server on robot)
+# Step 1: Start server on Reachy Mini
+python3 demos/09_mic_stream_to_pc/bidirectional_audio_server.py
+
+# Step 2: Receive stream on PC
+python3 demos/09_mic_stream_to_pc/receive_mic_stream.py
+
+# 👁️ Vision Algorithms - OpenCV vision algorithms on video stream
+python3 demos/10_vision_algorithms/10.py --signaling-host 10.42.0.75
+
+# 🤖 YOLO + Robot Control - YOLO detection with Zenoh robot control
+python3 demos/11_yolo_robot_control/11.py --signaling-host 10.42.0.75
 ```
 
 ---
@@ -196,6 +212,9 @@ The configuration file is included in `.gitignore` to protect your private infor
 | ⚡ **Zenoh Control** | Low-latency protocol control | `reachy_mini/command` |
 | 🎵 **Audio Player** | Play local/online audio files (on robot) | N/A (runs on robot) |
 | 🎶 **Audio Stream API** | REST API for remote audio control & streaming | Custom API (port 8001) |
+| 🎙️ **Mic Stream** | Stream mic audio from robot to PC | WebSocket (port 8002) |
+| 👁️ **Vision Algorithms** | OpenCV algorithms (face/motion/edge/color/corner) | N/A (PC only) |
+| 🤖 **YOLO + Control** | YOLO detection + Zenoh robot control | `reachy_mini/command` |
 
 ---
 
@@ -221,9 +240,10 @@ The configuration file is included in `.gitignore` to protect your private infor
 
 Current version provides basic control interfaces. Future plans:
 
+- [x] 👁️ **Vision System** - Camera-based visual recognition
+- [x] 🤖 **YOLO Integration** - Object detection with robot control
 - [ ] 🤖 **Agent Integration** - AI Agent for intelligent decision-making
 - [ ] 🧠 **LLM Integration** - Natural language interaction
-- [ ] 👁️ **Vision System** - Camera-based visual recognition
 - [ ] 🎤 **Voice Interaction** - Speech recognition and synthesis
 - [ ] 😊 **Emotional Expression** - Emotion-based motion expressions
 
