@@ -47,7 +47,11 @@ reachy-mini-starter/
 │   ├── 09_mic_stream_to_pc/      # 🎙️ 麦克风流传输到 PC
 │   ├── 10_vision_algorithms/     # 👁️ OpenCV 视觉算法（人脸/运动/边缘/颜色/角点检测）
 │   ├── 11_yolo_robot_control/    # 🤖 YOLO 检测 + Zenoh 机器人控制
-│   └── 12_antenna_angle_monitoring/ # 📡 天线舵机角度监控
+│   ├── 12_antenna_angle_monitoring/ # 📡 天线舵机角度监控
+│   ├── 13_head_look_around/      # 👀 头部环视运动
+│   ├── 14_head_track_red_object/ # 🎯 头部追踪红色物体
+│   ├── 16_bidirectional_audio/   # 🎙️🔊 双向音频服务
+│   └── 17_web_remote_camera/     # 🌐 网页版遥控摄像头
 ├── docs/                         # 文档
 │   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
 │   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
@@ -131,6 +135,22 @@ python3 demos/09_mic_stream_to_pc/receive_mic_stream.py
 
 # 📡 天线角度监控 - 通过 REST API 查询天线舵机角度
 python demos/12_antenna_angle_monitoring/test_antenna_rest.py
+
+# 👀 头部环视 - 头部环视运动
+python demos/13_head_look_around/13.py
+
+# 🎯 追踪红色物体 - 头部追踪红色物体运动
+python demos/14_head_track_red_object/14.py
+
+# 🎙️🔊 双向音频 - 将机器人麦克风音频推流到 PC（服务端运行在机器人上）
+# 第一步：在 Reachy Mini 上启动服务端
+python3 demos/16_bidirectional_audio/bidirectional_audio_server.py
+
+# 第二步：在 PC 上接收流
+python3 demos/16_bidirectional_audio/receive_mic_stream.py
+
+# 🌐 网页版遥控摄像头 - 通过浏览器控制机器人头部
+python3 demos/17_web_remote_camera/server.py
 ```
 
 ---
@@ -215,6 +235,10 @@ python demos/12_antenna_angle_monitoring/test_antenna_rest.py
 | 👁️ **视觉算法** | OpenCV 视觉算法（人脸/运动/边缘/颜色/角点） | N/A（仅 PC） |
 | 🤖 **YOLO + 控制** | YOLO 检测 + Zenoh 机器人控制 | `reachy_mini/command` |
 | 📡 **天线监控** | 通过 REST API 查询天线舵机角度 | `/api/state/*` |
+| 👀 **头部环视** | 头部环视运动 | `/api/move/goto` |
+| 🎯 **追踪红色物体** | 头部追踪红色物体运动 | `/api/move/goto` |
+| 🎙️🔊 **双向音频** | 双向音频服务 | WebSocket（端口 8002） |
+| 🌐 **网页版遥控摄像头** | 通过浏览器控制机器人头部 | WebSocket + REST API |
 
 ---
 

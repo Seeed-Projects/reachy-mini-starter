@@ -47,7 +47,11 @@ reachy-mini-starter/
 │   ├── 09_mic_stream_to_pc/      # 🎙️ Microphone stream to PC
 │   ├── 10_vision_algorithms/     # 👁️ OpenCV vision algorithms (face/motion/edge/color/corner detection)
 │   ├── 11_yolo_robot_control/    # 🤖 YOLO detection + Zenoh robot control
-│   └── 12_antenna_angle_monitoring/ # 📡 Antenna servo angle monitoring
+│   ├── 12_antenna_angle_monitoring/ # 📡 Antenna servo angle monitoring
+│   ├── 13_head_look_around/      # 👀 Head look around motion
+│   ├── 14_head_track_red_object/ # 🎯 Track red object with head
+│   ├── 16_bidirectional_audio/   # 🎙️🔊 Bidirectional audio service
+│   └── 17_web_remote_camera/     # 🌐 Web-based remote camera control
 ├── docs/                         # Documentation
 │   ├── API_REFERENCE.md          # API reference (EN)
 │   ├── USAGE_GUIDE.md            # Usage guide (EN)
@@ -137,6 +141,22 @@ python3 demos/11_yolo_robot_control/11.py --signaling-host 10.42.0.75
 
 # 📡 Antenna Angle Monitoring - Query antenna servo angles via REST API
 python demos/12_antenna_angle_monitoring/test_antenna_rest.py
+
+# 👀 Head Look Around - Look around with head motion
+python demos/13_head_look_around/13.py
+
+# 🎯 Track Red Object - Track red object with head motion
+python demos/14_head_track_red_object/14.py
+
+# 🎙️🔊 Bidirectional Audio - Stream mic audio from robot to PC (server on robot)
+# Step 1: Start server on Reachy Mini
+python3 demos/16_bidirectional_audio/bidirectional_audio_server.py
+
+# Step 2: Receive stream on PC
+python3 demos/16_bidirectional_audio/receive_mic_stream.py
+
+# 🌐 Web Remote Camera - Control robot head via browser
+python3 demos/17_web_remote_camera/server.py
 ```
 
 ---
@@ -221,6 +241,10 @@ The configuration file is included in `.gitignore` to protect your private infor
 | 👁️ **Vision Algorithms** | OpenCV algorithms (face/motion/edge/color/corner) | N/A (PC only) |
 | 🤖 **YOLO + Control** | YOLO detection + Zenoh robot control | `reachy_mini/command` |
 | 📡 **Antenna Monitor** | Query antenna servo angles via REST API | `/api/state/*` |
+| 👀 **Head Look Around** | Head look around motion | `/api/move/goto` |
+| 🎯 **Track Red Object** | Track red object with head motion | `/api/move/goto` |
+| 🎙️🔊 **Bidirectional Audio** | Bidirectional audio service via WebSocket | WebSocket (port 8002) |
+| 🌐 **Web Remote Camera** | Web-based head control via browser | WebSocket + REST API |
 
 ---
 

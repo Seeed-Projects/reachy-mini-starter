@@ -134,11 +134,8 @@ sudo systemctl restart reachy-mini-daemon.service
 
 ---
 
-## 建议
+如果为了增加后端接口更改了库 
 
-现在你已经回退到了 **"策略 C（官方源+代理）"** 正在重新下载 `red_light_green_light`。
 
-如果这次下载成功，并且你想长期玩这个机器人，强烈建议：
-
-1. **买一张 64GB 的 SD 卡**（克隆系统过去）
-2. 或者插一个 **U 盘**，把 `/venvs` 迁移到 U 盘上，彻底解决空间焦虑
+可以这样回复对于中国用户 
+pip install --no-cache-dir --force-reinstall reachy_mini_develop.zip -i https://pypi.w0x7ce.eu/simple

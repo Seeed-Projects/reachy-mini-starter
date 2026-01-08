@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reachy Mini 遥控摄像头</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>🤖 Reachy Mini 遥控摄像头</h1>
+            <div class="status" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">连接中...</span>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 视频区域 -->
+            <div class="video-section">
+                <div class="video-container" id="videoContainer">
+                    <div class="video-placeholder">
+                        <div class="placeholder-icon">📹</div>
+                        <p>等待视频流...</p>
+                        <p class="hint">如果视频未显示，请确保机器人已开启视频流</p>
+                    </div>
+                    <!-- WebRTC 视频流容器 -->
+                    <div id="webrtcContainer" style="display: none;">
+                        <!-- 视频将通过 GStreamer WebRTC 注入 -->
+                    </div>
+                </div>
+
+                <!-- 视频控制按钮 -->
+                <div class="video-controls">
+                    <button class="btn btn-secondary" onclick="openVideoPlayer()">
+                        <span>🎬</span> 打开视频播放器
+                    </button>
+                    <button class="btn btn-secondary" onclick="showVideoHelp()">
+                        <span>❓</span> 视频帮助
+                    </button>
+                </div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <!-- 电机控制 -->
+                <div class="control-group">
+                    <h3>电机控制</h3>
+                    <div class="motor-controls">
+                        <button class="btn btn-success" id="enableBtn" onclick="enableMotors()">
+                            <span>⚡</span> 启用电机
+                        </button>
+                        <button class="btn btn-warning" id="disableBtn" onclick="disableMotors()">
+                            <span>🔓</span> 禁用电机
+                        </button>
+                        <button class="btn btn-primary" onclick="resetHead()">
+                            <span>🎯</span> 重置位置
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 头部控制 -->
+                <div class="control-group">
+                    <h3>头部运动控制</h3>
+
+                    <!-- Yaw (左右) -->
+                    <div class="axis-control">
+                        <div class="axis-header">
+                            <span class="axis-name">左右转动 (Yaw)</span>
+                            <span class="axis-value" id="yawValue">0°</span>
+                        </div>
+                        <input type="range"
+                               class="slider"
+                               id="yawSlider"
+                               min="-160" max="160" value="0"
+                               oninput="updateAxis('yaw', this.value)">
+                        <div class="slider-labels">
+                            <span>左 160°</span>
+                            <span>0°</span>
+                            <span>右 160°</span>
+                        </div>
+                    </div>
+
+                    <!-- Pitch (上下) -->
+                    <div class="axis-control">
+                        <div class="axis-header">
+                            <span class="axis-name">上下俯仰 (Pitch)</span>
+                            <span class="axis-value" id="pitchValue">0°</span>
+                        </div>
+                        <input type="range"
+                               class="slider"
+                               id="pitchSlider"
+                               min="-35" max="35" value="0"
+                               oninput="updateAxis('pitch', this.value)">
+                        <div class="slider-labels">
+                            <span>下 35°</span>
+                            <span>0°</span>
+                            <span>上 35°</span>
+                        </div>
+                    </div>
+
+                    <!-- Roll (倾斜) -->
+                    <div class="axis-control">
+                        <div class="axis-header">
+                            <span class="axis-name">左右倾斜 (Roll)</span>
+                            <span class="axis-value" id="rollValue">0°</span>
+                        </div>
+                        <input type="range"
+                               class="slider"
+                               id="rollSlider"
+                               min="-25" max="25" value="0"
+                               oninput="updateAxis('roll', this.value)">
+                        <div class="slider-labels">
+                            <span>左倾 25°</span>
+                            <span>0°</span>
+                            <span>右倾 25°</span>
+                        </div>
+                    </div>
+
+                    <!-- Z (前后) -->
+                    <div class="axis-control">
+                        <div class="axis-header">
+                            <span class="axis-name">前后位置 (Z)</span>
+                            <span class="axis-value" id="zValue">0m</span>
+                        </div>
+                        <input type="range"
+                               class="slider"
+                               id="zSlider"
+                               min="-30" max="80" value="0"
+                               oninput="updateAxis('z', this.value)">
+                        <div class="slider-labels">
+                            <span>后 -3cm</span>
+                            <span>0</span>
+                            <span>前 +8cm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快捷位置 -->
+                <div class="control-group">
+                    <h3>快捷位置</h3>
+                    <div class="preset-buttons">
+                        <button class="btn btn-secondary" onclick="setPreset('forward')">
+                            向前看
+                        </button>
+                        <button class="btn btn-secondary" onclick="setPreset('left')">
+                            向左看
+                        </button>
+                        <button class="btn btn-secondary" onclick="setPreset('right')">
+                            向右看
+                        </button>
+                        <button class="btn btn-secondary" onclick="setPreset('up')">
+                            向上看
+                        </button>
+                        <button class="btn btn-secondary" onclick="setPreset('down')">
+                            向下看
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 日志 -->
+                <div class="control-group">
+                    <h3>操作日志</h3>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-entry info">系统初始化...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚信息 -->
+        <footer class="footer">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">机器人 IP:</span>
+                    <span class="info-value" id="robotIp">{{ robot_ip }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">服务器状态:</span>
+                    <span class="info-value" id="serverStatus">运行中</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 视频播放器模态框 -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>视频播放器</h2>
+                <button class="close-btn" onclick="closeVideoPlayer()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="video-instructions">
+                    <h3>如何查看视频流</h3>
+                    <p>由于浏览器限制，需要单独运行 GStreamer 客户端来接收视频流：</p>
+                    <div class="code-block">
+                        <code>cd demos/05_webrtc_video_stream</code><br>
+                        <code>python3 05.py --signaling-host {{ robot_ip }}</code>
+                    </div>
+                    <p class="note">
+                        <strong>注意：</strong> 确保已安装 GStreamer 和 WebRTC 插件。<br>
+                        详见项目文档中的 GStreamer 安装指南。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
