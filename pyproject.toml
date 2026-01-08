@@ -1,0 +1,12 @@
+[project]
+name = "reachymini-lite"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.4.0",
+    "opencv-python>=4.11.0.86",
+    "reachy-mini>=1.2.8",
+    "ultralytics>=8.3.250",
+]
