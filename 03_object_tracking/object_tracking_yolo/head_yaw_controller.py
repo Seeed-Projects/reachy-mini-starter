@@ -8,7 +8,7 @@ import math
 class HeadYawController:
     """头部 Yaw 控制器 - PID 控制"""
 
-    def __init__(self, pid_p=1.0, pid_i=0.0, pid_d=0.1, yaw_limit=160, dead_zone=0.05):
+    def __init__(self, pid_p=0.5, pid_i=0.0, pid_d=0.0, yaw_limit=160, dead_zone=0.05):
         """
         初始化控制器
 
@@ -22,6 +22,7 @@ class HeadYawController:
         self.pid_p = pid_p
         self.pid_i = pid_i
         self.pid_d = pid_d
+        self.gain = 0.08  # 增益系数，可通过滑条动态调整
         self.yaw_limit = math.radians(yaw_limit)
         self.dead_zone = dead_zone
 
@@ -89,7 +90,7 @@ class HeadYawController:
         # 图像坐标系：x 向右增大（从左到右）
         # 目标在右侧（x > center, error > 0）→ 头部需要向右转 → 需要**负** Yaw
         # 目标在左侧（x < center, error < 0）→ 头部需要向左转 → 需要**正** Yaw
-        yaw_adjustment = -control * 0.3  # 反转：右侧目标需要负 Yaw
+        yaw_adjustment = -control * self.gain  # 使用动态增益
         new_yaw = self.current_yaw + yaw_adjustment
 
         # 限制范围

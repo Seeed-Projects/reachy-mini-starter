@@ -1,18 +1,17 @@
 """
-Reachy Mini YOLO 物体追踪 - 头部 Pitch 版本
+Reachy Mini YOLO 物体追踪 - 头部 Pitch + Yaw 双轴追踪版本
 
-使用 YOLO 检测指定物体，使用头部 Pitch 进行垂直方向的物体追踪。
-Yaw 控制已禁用。
+使用 YOLO 检测指定物体，使用头部 Pitch 和 Yaw 进行双轴物体追踪。
 
 功能：
 1. 使用 YOLO 检测指定类别物体
 2. 使用位置滤波器平滑坐标波动
-3. 使用 PID 控制器计算头部 Pitch 调整量
+3. 使用 PID 控制器计算头部 Pitch 和 Yaw 调整量
 4. 控制头部使目标保持在视野中心
 
 控制策略：
 - 垂直方向: 使用头部 Pitch 旋转
-- 水平方向: 已禁用
+- 水平方向: 使用头部 Yaw 旋转
 
 前置条件：
     pip install reachy-mini opencv-python ultralytics
@@ -195,14 +194,15 @@ class YoloObjectTracker:
 
         # 手动控制状态
         self.manual_pitch = 0.0  # 当前手动 Pitch 值（度）
+        self.manual_yaw = 0.0  # 当前手动 Yaw 值（度）
         self.manual_mode = False  # 自动模式（已关闭手动）
 
-        # 头部 Yaw 控制器（已禁用）
-        # self.yaw_controller = HeadYawController(
-        #     pid_p=pid_p,
-        #     pid_i=pid_i,
-        #     pid_d=pid_d
-        # )
+        # 头部 Yaw 控制器（水平方向）
+        self.yaw_controller = HeadYawController(
+            pid_p=pid_p,
+            pid_i=pid_i,
+            pid_d=pid_d
+        )
 
         # 追踪状态
         self.is_tracking = False
@@ -253,19 +253,19 @@ class YoloObjectTracker:
                 new_pitch = self.pitch_controller.compute(filtered_y, height, dt)
                 self.pitch_controller.update(new_pitch)
 
-                # ========== Yaw 控制（已禁用）==========
-                # new_yaw = self.yaw_controller.compute(filtered_x, width, dt)
-                # self.yaw_controller.update(new_yaw)
+                # ========== Yaw 控制（水平方向）==========
+                new_yaw = self.yaw_controller.compute(filtered_x, width, dt)
+                self.yaw_controller.update(new_yaw)
 
-                # 发送控制指令（只控制 Pitch）
-                self.send_control(new_pitch)
+                # 发送控制指令（同时控制 Pitch 和 Yaw）
+                self.send_control(new_pitch, new_yaw)
 
         else:
             # 检查是否超时
             if current_time - self.last_detection_time > self.detection_timeout:
                 self.is_tracking = False
                 self.pitch_controller.reset()
-                # self.yaw_controller.reset()
+                self.yaw_controller.reset()
                 self.filter.reset()
 
         # 绘制结果
@@ -273,20 +273,21 @@ class YoloObjectTracker:
 
         return annotated_frame, target_x, detection, area, center
 
-    def send_control(self, head_pitch):
+    def send_control(self, head_pitch, head_yaw):
         """
         发送控制指令到机器人
 
         Args:
             head_pitch: 头部 Pitch 角度（弧度）
+            head_yaw: 头部 Yaw 角度（弧度）
         """
         try:
-            # 创建头部姿态（只使用 Pitch，Yaw 固定为 0）
+            # 创建头部姿态（同时使用 Pitch 和 Yaw）
             head_pose = create_head_pose(
                 x=0, y=0, z=0,
                 roll=0,
                 pitch=math.degrees(head_pitch),
-                yaw=0,  # Yaw 固定为 0（禁用水平控制）
+                yaw=math.degrees(head_yaw),
                 degrees=True,
                 mm=True
             )
@@ -301,23 +302,26 @@ class YoloObjectTracker:
         except Exception as e:
             print(f"Error sending control: {e}")
 
-    def manual_control(self, pitch_delta):
+    def manual_control(self, pitch_delta, yaw_delta=0):
         """
-        手动控制 Pitch
+        手动控制 Pitch 和 Yaw
 
         Args:
             pitch_delta: Pitch 变化量（度），负=抬头，正=低头
+            yaw_delta: Yaw 变化量（度），负=左转，正=右转
         """
         self.manual_pitch += pitch_delta
-        # 限制在安全范围内 [-40, 40]
+        self.manual_yaw += yaw_delta
+        # 限制在安全范围内
         self.manual_pitch = max(-40, min(40, self.manual_pitch))
+        self.manual_yaw = max(-160, min(160, self.manual_yaw))
 
         try:
             head_pose = create_head_pose(
                 x=0, y=0, z=0,
                 roll=0,
                 pitch=self.manual_pitch,
-                yaw=0,
+                yaw=self.manual_yaw,
                 degrees=True,
                 mm=True
             )
@@ -508,29 +512,48 @@ def main():
         display_width = int(width * window_scale)
         display_height = int(height * window_scale)
         print(f"显示窗口大小: {display_width}x{display_height}\n")
-        print("自动追踪模式 (WS手动微调):")
-        print("  W - 低头（Pitch +）")
-        print("  S - 抬头（Pitch -）")
-        print("  滑条 - 动态调整 PID 参数")
+        print("自动追踪模式 (Pitch + Yaw 双轴追踪):")
+        print("  W/S - 手动 Pitch 调整")
+        print("  A/D - 手动 Yaw 调整")
+        print("  Axis 滑条 - 切换调整哪个轴 (0=Pitch, 1=Yaw)")
+        print("  PID 滑条 - 调整当前选中轴的参数")
         print("  Q - 退出\n")
 
         # 创建滑条窗口
         window_name = f"YOLO Object Tracking - {args.target_class}"
         cv2.namedWindow(window_name)
 
-        # 创建 PID 滑条
-        cv2.createTrackbar("P Gain", window_name, int(args.pid_p * 100), 200, lambda x: None)
+        # 轴切换开关 (0=Pitch, 1=Yaw)
+        cv2.createTrackbar("Axis", window_name, 0, 1, lambda x: None)
+
+        # 创建 PID 滑条（通过 Switch 切换调整哪个轴）
+        cv2.createTrackbar("P Gain", window_name, int(args.pid_p * 100), 400, lambda x: None)
         cv2.createTrackbar("I Gain", window_name, int(args.pid_i * 100), 100, lambda x: None)
         cv2.createTrackbar("D Gain", window_name, int(args.pid_d * 100), 100, lambda x: None)
-        cv2.createTrackbar("Speed", window_name, int(tracker.pitch_controller.gain * 100), 200, lambda x: None)
+        cv2.createTrackbar("Speed", window_name, int(tracker.pitch_controller.gain * 100), 400, lambda x: None)
 
         try:
             while True:
+                # 读取轴切换开关 (0=Pitch, 1=Yaw)
+                axis_switch = cv2.getTrackbarPos("Axis", window_name)
+
                 # 从滑条读取 PID 参数
-                tracker.pitch_controller.pid_p = cv2.getTrackbarPos("P Gain", window_name) / 100.0
-                tracker.pitch_controller.pid_i = cv2.getTrackbarPos("I Gain", window_name) / 100.0
-                tracker.pitch_controller.pid_d = cv2.getTrackbarPos("D Gain", window_name) / 100.0
-                tracker.pitch_controller.gain = cv2.getTrackbarPos("Speed", window_name) / 100.0
+                p_gain = cv2.getTrackbarPos("P Gain", window_name) / 100.0
+                i_gain = cv2.getTrackbarPos("I Gain", window_name) / 100.0
+                d_gain = cv2.getTrackbarPos("D Gain", window_name) / 100.0
+                speed_gain = cv2.getTrackbarPos("Speed", window_name) / 100.0
+
+                # 根据开关状态，更新对应轴的参数
+                if axis_switch == 0:  # Pitch
+                    tracker.pitch_controller.pid_p = p_gain
+                    tracker.pitch_controller.pid_i = i_gain
+                    tracker.pitch_controller.pid_d = d_gain
+                    tracker.pitch_controller.gain = speed_gain
+                else:  # Yaw
+                    tracker.yaw_controller.pid_p = p_gain
+                    tracker.yaw_controller.pid_i = i_gain
+                    tracker.yaw_controller.pid_d = d_gain
+                    tracker.yaw_controller.gain = speed_gain
 
                 # 获取摄像头画面
                 frame = reachy_mini.media.get_frame()
@@ -550,37 +573,56 @@ def main():
                 cv2.putText(annotated_frame, target_text, (10, 70),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
-                # 显示当前 Pitch
+                # 显示当前 Pitch 和 Yaw
                 pitch_deg = tracker.manual_pitch if tracker.manual_mode else math.degrees(tracker.pitch_controller.current_pitch)
-                pitch_text = f"Head Pitch: {pitch_deg:.1f}° / [-40°, +40°]"
+                yaw_deg = math.degrees(tracker.yaw_controller.current_yaw)
+                pitch_text = f"Pitch: {pitch_deg:.1f}° / [-40°, +40°]"
+                yaw_text = f"Yaw: {yaw_deg:.1f}° / [-160°, +160°]"
                 cv2.putText(annotated_frame, pitch_text, (10, 100),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
+                cv2.putText(annotated_frame, yaw_text, (10, 125),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 2)
 
                 # 显示目标位置
                 if center is not None:
-                    target_y_text = f"Target Y: {int(center[1])} / {height}"
-                    cv2.putText(annotated_frame, target_y_text, (10, 125),
+                    target_pos_text = f"Target: ({int(center[0])}, {int(center[1])})"
+                    cv2.putText(annotated_frame, target_pos_text, (10, 150),
                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
 
                 # 显示模式
                 mode_text = f"Mode: {'MANUAL' if tracker.manual_mode else 'AUTO'}"
                 mode_color = (0, 255, 255) if tracker.manual_mode else (255, 0, 255)
-                cv2.putText(annotated_frame, mode_text, (10, 150),
+                cv2.putText(annotated_frame, mode_text, (10, 175),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, mode_color, 2)
 
                 # 显示控制提示
-                help_text = "W/S: Manual Pitch +/-"
-                cv2.putText(annotated_frame, help_text, (10, 175),
+                help_text = "WASD: Manual | Axis(0=P/1=Y): Switch"
+                cv2.putText(annotated_frame, help_text, (10, 200),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1)
 
-                # 显示 PID 参数
-                pid_text = f"PID: P={tracker.pitch_controller.pid_p:.2f} I={tracker.pitch_controller.pid_i:.2f} D={tracker.pitch_controller.pid_d:.2f}"
-                cv2.putText(annotated_frame, pid_text, (10, 200),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+                # 显示 Pitch PID 参数
+                pitch_pid_text = f"Pitch PID: P={tracker.pitch_controller.pid_p:.2f} I={tracker.pitch_controller.pid_i:.2f} D={tracker.pitch_controller.pid_d:.2f}"
+                cv2.putText(annotated_frame, pitch_pid_text, (10, 225),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, (100, 200, 255), 1)
 
-                gain_text = f"Gain: {tracker.pitch_controller.gain:.2f}"
-                cv2.putText(annotated_frame, gain_text, (10, 220),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+                pitch_gain_text = f"Pitch Gain: {tracker.pitch_controller.gain:.2f}"
+                cv2.putText(annotated_frame, pitch_gain_text, (10, 245),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, (100, 200, 255), 1)
+
+                # 显示 Yaw PID 参数
+                yaw_pid_text = f"Yaw PID: P={tracker.yaw_controller.pid_p:.2f} I={tracker.yaw_controller.pid_i:.2f} D={tracker.yaw_controller.pid_d:.2f}"
+                cv2.putText(annotated_frame, yaw_pid_text, (10, 270),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 150, 0), 1)
+
+                yaw_gain_text = f"Yaw Gain: {tracker.yaw_controller.gain:.2f}"
+                cv2.putText(annotated_frame, yaw_gain_text, (10, 290),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 150, 0), 1)
+
+                # 显示当前选择的轴
+                axis_text = f"Adjusting: {'PITCH' if axis_switch == 0 else 'YAW'}"
+                axis_color = (100, 200, 255) if axis_switch == 0 else (255, 150, 0)
+                cv2.putText(annotated_frame, axis_text, (10, 315),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, axis_color, 2)
 
                 # 缩放显示
                 if window_scale != 1.0:
@@ -596,11 +638,17 @@ def main():
                     print("\n退出...")
                     break
                 elif key == ord('w'):
-                    tracker.manual_control(2)  # 向上 2 度
-                    print(f"Pitch: {tracker.manual_pitch:.1f}° (向上)")
+                    tracker.manual_control(2, 0)  # 低头 2 度
+                    print(f"Pitch: {tracker.manual_pitch:.1f}°, Yaw: {tracker.manual_yaw:.1f}°")
                 elif key == ord('s'):
-                    tracker.manual_control(-2)  # 向下 2 度
-                    print(f"Pitch: {tracker.manual_pitch:.1f}° (向下)")
+                    tracker.manual_control(-2, 0)  # 抬头 2 度
+                    print(f"Pitch: {tracker.manual_pitch:.1f}°, Yaw: {tracker.manual_yaw:.1f}°")
+                elif key == ord('a'):
+                    tracker.manual_control(0, -2)  # 左转 2 度
+                    print(f"Pitch: {tracker.manual_pitch:.1f}°, Yaw: {tracker.manual_yaw:.1f}°")
+                elif key == ord('d'):
+                    tracker.manual_control(0, 2)  # 右转 2 度
+                    print(f"Pitch: {tracker.manual_pitch:.1f}°, Yaw: {tracker.manual_yaw:.1f}°")
 
         except KeyboardInterrupt:
             print("\n中断，关闭...")
