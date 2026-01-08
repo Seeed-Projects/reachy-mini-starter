@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reachy Mini - 网页控制与视频</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="5"></circle>
+                    <path d="M3 21c0-4.97 4.03-9 9-9s9 4.03 9 9"></path>
+                    <path d="M12 3v3"></path>
+                    <path d="M12 13v3"></path>
+                </svg>
+                <span>Reachy Mini</span>
+            </div>
+            <div class="nav-links">
+                <div class="status-indicator">
+                    <span class="status-dot" id="wsStatusDot"></span>
+                    <span class="status-text" id="wsStatusText">连接中...</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot" id="videoStatusDot"></span>
+                    <span class="status-text" id="videoStatusText">视频: 连接中...</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-container">
+        <!-- 左侧：视频流 -->
+        <section class="video-section">
+            <div class="video-container">
+                <div class="video-header">
+                    <h2>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 7l-7 5 7 5V7z"></path>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        实时视频流
+                    </h2>
+                    <div class="video-info">
+                        <span class="info-badge">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                <circle cx="12" cy="20" r="1"></circle>
+                            </svg>
+                            {{ signalling_host }}
+                        </span>
+                    </div>
+                </div>
+                <div class="video-wrapper">
+                    <img id="videoFeed" src="/video_feed" alt="机器人视频流">
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="loading-spinner"></div>
+                        <span>正在连接视频流...</span>
+                    </div>
+                    <div class="error-overlay" id="errorOverlay" style="display: none;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span>无法连接视频流</span>
+                    </div>
+                </div>
+                <div class="video-footer">
+                    <div class="stream-stats">
+                        <span class="stat-item">
+                            <span class="stat-label">格式</span>
+                            <span class="stat-value">MJPEG</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-label">分辨率</span>
+                            <span class="stat-value">640x480</span>
+                        </span>
+                    </div>
+                    <button class="btn-icon" id="fullscreenBtn" title="全屏">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右侧：控制面板 -->
+        <section class="control-section">
+            <!-- 快捷操作 -->
+            <div class="control-card quick-actions">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    快捷操作
+                </h3>
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="enableMotors">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                            <line x1="12" y1="2" x2="12" y2="12"></line>
+                        </svg>
+                        启用电机
+                    </button>
+                    <button class="btn btn-danger" id="disableMotors">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        禁用电机
+                    </button>
+                    <button class="btn btn-warning" id="resetAll">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                        全部回零
+                    </button>
+                </div>
+            </div>
+
+            <!-- 控制设置 -->
+            <div class="control-card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    控制设置
+                </h3>
+                <div class="setting-row">
+                    <label>更新频率</label>
+                    <select id="updateRate">
+                        <option value="10">10 Hz (平滑)</option>
+                        <option value="30" selected>30 Hz (推荐)</option>
+                        <option value="60">60 Hz (极速)</option>
+                    </select>
+                </div>
+                <div class="setting-info">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>WebSocket 低延迟控制，滑块调整时实时发送命令</span>
+                </div>
+            </div>
+
+            <!-- 头部位置 -->
+            <div class="control-card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    头部位置 (米)
+                </h3>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">X 轴 (前后)</span>
+                        <span class="slider-value" id="headXValue">0.000</span>
+                    </div>
+                    <input type="range" class="control-slider" id="headX" min="-0.05" max="0.05" value="0" step="0.001">
+                    <div class="slider-range">
+                        <span>后 -0.05</span>
+                        <span>前 +0.05</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Y 轴 (左右)</span>
+                        <span class="slider-value" id="headYValue">0.000</span>
+                    </div>
+                    <input type="range" class="control-slider" id="headY" min="-0.05" max="0.05" value="0" step="0.001">
+                    <div class="slider-range">
+                        <span>右 -0.05</span>
+                        <span>左 +0.05</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Z 轴 (上下)</span>
+                        <span class="slider-value" id="headZValue">0.000</span>
+                    </div>
+                    <input type="range" class="control-slider" id="headZ" min="-0.03" max="0.08" value="0" step="0.001">
+                    <div class="slider-range">
+                        <span>下 -0.03</span>
+                        <span>上 +0.08</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 头部姿态 -->
+            <div class="control-card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                    </svg>
+                    头部姿态 (度)
+                </h3>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Roll (翻滚)</span>
+                        <span class="slider-value" id="headRollValue">0°</span>
+                    </div>
+                    <input type="range" class="control-slider" id="headRoll" min="-25" max="25" value="0" step="1">
+                    <div class="slider-range">
+                        <span>左倾 -25°</span>
+                        <span>右倾 +25°</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Pitch (俯仰)</span>
+                        <span class="slider-value" id="headPitchValue">0°</span>
+                    </div>
+                    <input type="range" class="control-slider" id="headPitch" min="-35" max="35" value="0" step="1">
+                    <div class="slider-range">
+                        <span>低头 -35°</span>
+                        <span>抬头 +35°</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Yaw (偏航)</span>
+                        <span class="slider-value" id="headYawValue">0°</span>
+                    </div>
+                    <input type="range" class="control-slider" id="headYaw" min="-160" max="160" value="0" step="1">
+                    <div class="slider-range">
+                        <span>右转 -160°</span>
+                        <span>左转 +160°</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 天线控制 -->
+            <div class="control-card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 12h5"></path>
+                        <path d="M17 12h5"></path>
+                        <path d="M7 12a5 5 0 0 1 5-5 5 5 0 0 1 5 5"></path>
+                        <path d="M7 12a5 5 0 0 0 5 5 5 5 0 0 0 5-5"></path>
+                    </svg>
+                    天线角度 (度)
+                </h3>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">左天线</span>
+                        <span class="slider-value" id="antennaLeftValue">0°</span>
+                    </div>
+                    <input type="range" class="control-slider" id="antennaLeft" min="-80" max="80" value="0" step="1">
+                    <div class="slider-range">
+                        <span>下/后 -80°</span>
+                        <span>上/前 +80°</span>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">右天线</span>
+                        <span class="slider-value" id="antennaRightValue">0°</span>
+                    </div>
+                    <input type="range" class="control-slider" id="antennaRight" min="-80" max="80" value="0" step="1">
+                    <div class="slider-range">
+                        <span>下/后 -80°</span>
+                        <span>上/前 +80°</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 身体偏航 -->
+            <div class="control-card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+                        <path d="M12 2a10 10 0 0 1 10 10"></path>
+                        <path d="M12 22c5.523 0 10-4.477 10-10h-10v10z"></path>
+                    </svg>
+                    身体偏航 (度)
+                </h3>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Body Yaw</span>
+                        <span class="slider-value" id="bodyYawValue">0°</span>
+                    </div>
+                    <input type="range" class="control-slider" id="bodyYaw" min="-160" max="160" value="0" step="1">
+                    <div class="slider-range">
+                        <span>右转 -160°</span>
+                        <span>左转 +160°</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 通知提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- JavaScript 模块 -->
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/control.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

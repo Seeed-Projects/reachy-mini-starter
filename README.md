@@ -50,8 +50,10 @@ reachy-mini-starter/
 │   ├── 12_antenna_angle_monitoring/ # 📡 Antenna servo angle monitoring
 │   ├── 13_head_look_around/      # 👀 Head look around motion
 │   ├── 14_head_track_red_object/ # 🎯 Track red object with head
+│   ├── 15_web_realtime_control/  # 🌐 Web-based real-time control
 │   ├── 16_bidirectional_audio/   # 🎙️🔊 Bidirectional audio service
-│   └── 17_web_remote_camera/     # 🌐 Web-based remote camera control
+│   ├── 17_web_remote_camera/     # 🌐 Web-based remote camera control
+│   └── 18_webrtc_to_http_stream/ # 📡 WebRTC to MJPEG video streaming
 ├── docs/                         # Documentation
 │   ├── API_REFERENCE.md          # API reference (EN)
 │   ├── USAGE_GUIDE.md            # Usage guide (EN)
@@ -157,6 +159,9 @@ python3 demos/16_bidirectional_audio/receive_mic_stream.py
 
 # 🌐 Web Remote Camera - Control robot head via browser
 python3 demos/17_web_remote_camera/server.py
+
+# 📡 WebRTC to MJPEG Stream - Watch robot video in browser
+python3 demos/18_webrtc_to_http_stream/18.py --signaling-host 10.42.0.75
 ```
 
 ---
@@ -244,7 +249,9 @@ The configuration file is included in `.gitignore` to protect your private infor
 | 👀 **Head Look Around** | Head look around motion | `/api/move/goto` |
 | 🎯 **Track Red Object** | Track red object with head motion | `/api/move/goto` |
 | 🎙️🔊 **Bidirectional Audio** | Bidirectional audio service via WebSocket | WebSocket (port 8002) |
+| 🌐 **Web Real-time Control** | Web-based real-time robot head control | WebSocket + REST API |
 | 🌐 **Web Remote Camera** | Web-based head control via browser | WebSocket + REST API |
+| 📡 **WebRTC to MJPEG** | Watch robot video stream in browser | MJPEG HTTP stream |
 
 ---
 

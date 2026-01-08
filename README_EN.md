@@ -50,8 +50,10 @@ reachy-mini-starter/
 │   ├── 12_antenna_angle_monitoring/ # 📡 天线舵机角度监控
 │   ├── 13_head_look_around/      # 👀 头部环视运动
 │   ├── 14_head_track_red_object/ # 🎯 头部追踪红色物体
+│   ├── 15_web_realtime_control/  # 🌐 网页实时控制
 │   ├── 16_bidirectional_audio/   # 🎙️🔊 双向音频服务
-│   └── 17_web_remote_camera/     # 🌐 网页版遥控摄像头
+│   ├── 17_web_remote_camera/     # 🌐 网页版遥控摄像头
+│   └── 18_webrtc_to_http_stream/ # 📡 WebRTC 转 MJPEG 视频流
 ├── docs/                         # 文档
 │   ├── API_REFERENCE_CN.md       # API 参考文档（中文）
 │   ├── USAGE_GUIDE_CN.md         # 使用指南（中文）
@@ -151,6 +153,9 @@ python3 demos/16_bidirectional_audio/receive_mic_stream.py
 
 # 🌐 网页版遥控摄像头 - 通过浏览器控制机器人头部
 python3 demos/17_web_remote_camera/server.py
+
+# 📡 WebRTC 转 MJPEG 视频流 - 在浏览器中观看机器人视频
+python3 demos/18_webrtc_to_http_stream/18.py --signaling-host 10.42.0.75
 ```
 
 ---
@@ -238,7 +243,9 @@ python3 demos/17_web_remote_camera/server.py
 | 👀 **头部环视** | 头部环视运动 | `/api/move/goto` |
 | 🎯 **追踪红色物体** | 头部追踪红色物体运动 | `/api/move/goto` |
 | 🎙️🔊 **双向音频** | 双向音频服务 | WebSocket（端口 8002） |
-| 🌐 **网页版遥控摄像头** | 通过浏览器控制机器人头部 | WebSocket + REST API |
+| 🌐 **网页实时控制** | 通过浏览器控制机器人头部运动 | WebSocket + REST API |
+| 🌐 **网页版遥控摄像头** | 网页版遥控摄像头控制 | WebSocket + REST API |
+| 📡 **WebRTC 转 MJPEG** | 在浏览器中观看机器人视频流 | MJPEG HTTP 流 |
 
 ---
 
