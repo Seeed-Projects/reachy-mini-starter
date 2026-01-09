@@ -84,10 +84,27 @@ reachymini_lite/
 
 1. **Python Environment**: Python 3.12 or higher
 2. **Hardware**: Reachy Mini robot
-3. **Start daemon**:
-   ```bash
-   reachy-mini-daemon start
-   ```
+3. **Ensure the Robot Server is running (Daemon)**
+
+The Daemon is a background service that handles the low-level communication with motors and sensors. It must be running for your code to work.
+
+**On Reachy Mini (Wireless)**: The daemon is running when the robot is powered on. Ensure your computer and Reachy Mini are on the same network.
+
+**On Reachy Mini Lite (USB)** - You have two options:
+- Start the desktop application
+- Open a terminal and run:
+  ```bash
+  uv run reachy-mini-daemon
+  ```
+
+**For Simulation (No robot needed)** - You have two options:
+- Start the desktop application
+- Open a terminal and run:
+  ```bash
+  uv run reachy-mini-daemon --sim
+  ```
+
+✅ **Verification**: Open http://localhost:8000 in your browser. If you see the Reachy Dashboard, you are ready!
 
 ### Install Dependencies
 

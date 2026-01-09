@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO 目标追踪 - Reachy Mini</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎯 YOLO 目标追踪</h1>
+            <p class="subtitle">Reachy Mini 双轴追踪系统 (Pitch + Yaw)</p>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Video Section -->
+            <div class="video-card">
+                <div class="video-wrapper">
+                    <img id="videoStream" class="video-stream" src="/video" alt="视频流">
+                    <canvas id="overlayCanvas" class="overlay-canvas"></canvas>
+                    <div class="video-status">
+                        <span class="status-indicator" id="statusIndicator"></span>
+                        <span id="statusText">连接中...</span>
+                    </div>
+                </div>
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-label">追踪状态</div>
+                        <div class="stat-value" id="trackingStatus">未追踪</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">目标类别</div>
+                        <div class="stat-value" id="targetClass">Bottle</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">俯仰角</div>
+                        <div class="stat-value" id="pitchAngle">0.0°</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">偏航角</div>
+                        <div class="stat-value" id="yawAngle">0.0°</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">检测数</div>
+                        <div class="stat-value" id="detectionCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <!-- Control Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">控制面板</div>
+                        <div class="card-icon">🎮</div>
+                    </div>
+                    <div class="button-group">
+                        <button id="startBtn" class="btn btn-primary">
+                            <span>▶</span> 开始追踪
+                        </button>
+                        <button id="stopBtn" class="btn btn-danger" disabled>
+                            <span>⏹</span> 停止追踪
+                        </button>
+                        <button id="resetBtn" class="btn btn-warning">
+                            <span>↺</span> 重置状态
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Detector Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">检测器设置</div>
+                        <div class="card-icon">🔍</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">目标类别</label>
+                        <select id="classSelect" class="form-select">
+                            <option value="bottle">Bottle</option>
+                            <option value="cup">Cup</option>
+                            <option value="person">Person</option>
+                            <option value="cell phone">Cell Phone</option>
+                        </select>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">置信度阈值</span>
+                            <span class="slider-value" id="confThresholdValue">0.3</span>
+                        </div>
+                        <input type="range" id="confThreshold" class="range"
+                               min="0.1" max="1.0" step="0.05" value="0.3">
+                    </div>
+                </div>
+
+                <!-- Filter Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">滤波器设置</div>
+                        <div class="card-icon">📊</div>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">窗口大小</span>
+                            <span class="slider-value" id="filterWindowSizeValue">5</span>
+                        </div>
+                        <input type="range" id="filterWindowSize" class="range"
+                               min="1" max="20" step="1" value="5">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">跳变阈值 (px)</span>
+                            <span class="slider-value" id="filterJumpThresholdValue">30</span>
+                        </div>
+                        <input type="range" id="filterJumpThreshold" class="range"
+                               min="10" max="100" step="5" value="30">
+                    </div>
+                </div>
+
+                <!-- PID Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">PID 控制</div>
+                        <div class="card-icon">⚙️</div>
+                    </div>
+                    <div class="tabs">
+                        <button id="pitchTab" class="tab active">Pitch (垂直)</button>
+                        <button id="yawTab" class="tab">Yaw (水平)</button>
+                    </div>
+                    <div id="pitchContent" class="tab-content active">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">比例系数 (P)</span>
+                                <span class="slider-value" id="pitchPValue">0.5</span>
+                            </div>
+                            <input type="range" id="pitchP" class="range"
+                                   min="0" max="4.0" step="0.01" value="0.5">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">积分系数 (I)</span>
+                                <span class="slider-value" id="pitchIValue">0.0</span>
+                            </div>
+                            <input type="range" id="pitchI" class="range"
+                                   min="0" max="1.0" step="0.01" value="0.0">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">微分系数 (D)</span>
+                                <span class="slider-value" id="pitchDValue">0.0</span>
+                            </div>
+                            <input type="range" id="pitchD" class="range"
+                                   min="0" max="1.0" step="0.01" value="0.0">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">速度增益</span>
+                                <span class="slider-value" id="pitchGainValue">0.08</span>
+                            </div>
+                            <input type="range" id="pitchGain" class="range"
+                                   min="0.01" max="0.5" step="0.01" value="0.08">
+                        </div>
+                    </div>
+                    <div id="yawContent" class="tab-content">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">比例系数 (P)</span>
+                                <span class="slider-value" id="yawPValue">0.5</span>
+                            </div>
+                            <input type="range" id="yawP" class="range"
+                                   min="0" max="4.0" step="0.01" value="0.5">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">积分系数 (I)</span>
+                                <span class="slider-value" id="yawIValue">0.0</span>
+                            </div>
+                            <input type="range" id="yawI" class="range"
+                                   min="0" max="1.0" step="0.01" value="0.0">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">微分系数 (D)</span>
+                                <span class="slider-value" id="yawDValue">0.0</span>
+                            </div>
+                            <input type="range" id="yawD" class="range"
+                                   min="0" max="1.0" step="0.01" value="0.0">
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">速度增益</span>
+                                <span class="slider-value" id="yawGainValue">0.08</span>
+                            </div>
+                            <input type="range" id="yawGain" class="range"
+                                   min="0.01" max="0.5" step="0.01" value="0.08">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>YOLO 目标追踪系统 | Reachy Mini | Powered by FastAPI & Ultralytics</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

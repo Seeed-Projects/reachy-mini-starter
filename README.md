@@ -84,10 +84,27 @@ reachymini_lite/
 
 1. **Python 环境**: Python 3.12 或更高版本
 2. **硬件设备**: Reachy Mini 机器人
-3. **启动守护进程**:
-   ```bash
-   reachy-mini-daemon start
-   ```
+3. **启动 Robot Server (Daemon)**
+
+Daemon 是一个后台服务，用于处理与电机和传感器的底层通信。在使用这些脚本之前，Daemon 必须处于运行状态。
+
+**Reachy Mini (无线版本)**: 当机器人开机时，daemon 自动运行。确保你的电脑和 Reachy Mini 在同一网络中。
+
+**Reachy Mini Lite (USB 连接)** - 你有两种选择：
+- 启动桌面应用程序
+- 打开终端运行：
+  ```bash
+  uv run reachy-mini-daemon
+  ```
+
+**仿真模式 (无需机器人)** - 你有两种选择：
+- 启动桌面应用程序
+- 打开终端运行：
+  ```bash
+  uv run reachy-mini-daemon --sim
+  ```
+
+✅ **验证方法**: 在浏览器中打开 http://localhost:8000。如果看到 Reachy 仪表板，说明你已经准备好了！
 
 ### 安装依赖
 
